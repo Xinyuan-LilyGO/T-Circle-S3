@@ -1,0 +1,6 @@
+[submodule "3rdparty/NMSIS"]
+	path = 3rdparty/NMSIS
+	url = https://github.com/Nuclei-Software/NMSIS.git
+[submodule "3rdparty/u8g2"]
+	path = 3rdparty/u8g2
+	url = https://github.com/olikraus/u8g2.git
