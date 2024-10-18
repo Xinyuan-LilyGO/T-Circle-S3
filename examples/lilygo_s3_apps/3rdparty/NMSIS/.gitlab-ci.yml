@@ -1,0 +1,304 @@
+variables:
+  NUCLEI_SDK: git@gito:software/library/nuclei-sdk.git
+  SDK_BRANCH: develop
+  SOC: evalsoc
+  RUNTARGET: qemu
+  IMAGE: rego.corp.nucleisys.com/software/sdkbuild
+  IMAGE_TAG: "2024.06"
+
+default:
+  tags:
+    - env::docker
+    - net::outside
+  image: $IMAGE:$IMAGE_TAG
+  before_script:
+    - free -g
+    - uname -a
+    - lscpu
+  after_script:
+    - free -g
+    - ps aux | grep qemu
+
+stages:
+  - build
+  - test
+  - release
+
+build_doc:
+  stage: build
+  interruptible: true
+  retry: 1
+  only:
+    refs:
+      - master
+      - develop
+      - /^feature\/.*/
+      - merge_requests
+    changes:
+      - NMSIS/doc/source/**/**/**/*
+      - .gitlab-ci.yml
+      - NMSIS/Core/
+      - NMSIS/DSP/
+      - NMSIS/NN/
+  artifacts:
+    when: always
+    name: "nmsis_doc-job${CI_JOB_ID}-${CI_COMMIT_SHA::8}"
+    paths:
+      - NMSIS/doc/build
+    expire_in: 2 day
+  before_script:
+    - apt update
+    - apt install -y doxygen python3 make latexmk texlive-base texlive-latex-extra python3-pip
+    - pip3 config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple
+    - pip3 install -r NMSIS/doc/requirements.txt
+  script:
+    - cd NMSIS/doc
+    - make clean
+    - mkdir build
+    - make all > build/build.log 2>&1
+    - make latexpdf >> build/build.log 2>&1
+    - make clean_xml
+    - cp build/latex/*.pdf build/html/
+
+build_library:
+  stage: build
+  interruptible: true
+  retry: 1
+  only:
+    refs:
+      - master
+      - develop
+      - /^feature\/.*/
+      - merge_requests
+  artifacts:
+    when: always
+    name: "nmsis_library-job${CI_JOB_ID}-${CI_COMMIT_SHA::8}"
+    paths:
+      - NMSIS/gen
+      - NMSIS/build/*/*/build.log
+    expire_in: 2 day
+  variables:
+    PARALLEL_OPTS: "-j8"
+  script:
+    - apt update
+    - apt install -y python3 python3-pip
+    - pip3 install prettytable
+    - cd NMSIS
+    - echo "Generate NMSIS Library for Nuclei RISC-V Processors"
+    - make gen | grep -E "^Build\ Library|^\+|^\|"
+    - buildsts=${PIPESTATUS[0]}
+    - mkdir -p gen/
+    - mv Library gen/
+    - exit $buildsts
+
+build_align_library:
+  stage: build
+  interruptible: true
+  retry: 1
+  only:
+    refs:
+      - master
+      - develop
+      - /^feature\/.*/
+      - merge_requests
+  artifacts:
+    when: always
+    name: "nmsis_align_library-job${CI_JOB_ID}-${CI_COMMIT_SHA::8}"
+    paths:
+      - NMSIS/Library
+      - NMSIS/build.log
+    expire_in: 2 day
+  script:
+    - apt update
+    - apt install -y python3 python3-pip
+    - pip3 install prettytable
+    - cd NMSIS
+    - echo "Generate NMSIS Library(Memory access without unalign R/W) for Nuclei RISC-V Processors"
+    - make gen_unalign > build.log 2>&1
+
+.test_job_template: &test_job_template_default
+  stage: test
+  timeout: 4h
+  interruptible: true
+  only:
+    refs:
+      - master
+      - develop
+      - /^feature\/.*/
+      - merge_requests
+  before_script:
+    - free -g
+    - uname -a
+    - lscpu
+    # prepare for docker ssh environment
+    ## https://docs.gitlab.com/ee/ci/ssh_keys/#ssh-keys-when-using-the-docker-executor
+    - apt update
+    - command -v ssh-agent >/dev/null || ( apt-get update -y && apt-get install openssh-client -y )
+    - eval $(ssh-agent -s)
+    - mkdir -p ~/.ssh
+    - chmod 700 ~/.
+    - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
+    # important: need to avoid git ssh asking yes/no when clone
+    # https://serverfault.com/questions/469052/ssh-failing-from-script-working-on-command-line-git
+    - ssh-keyscan gito > ~/.ssh/known_hosts
+    - apt install -y python3 python3-pip
+    - pip3 config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple
+    - python3 -m pip install --upgrade pip
+    - pip3 install prettytable==2.1.0 psutil==5.8.0 pyserial==3.5 markdown
+    - export SDK_COPY_OBJECTS="elf,map"
+  dependencies:
+    - build_library
+
+test_nn_library:
+  <<: *test_job_template_default
+  artifacts:
+    when: always
+    name: "nmsis_nn_test_cycles_logs-job${CI_JOB_ID}-${CI_COMMIT_SHA::8}"
+    paths:
+      - log_nmsis_*.zip
+      - NMSIS/Logs
+    expire_in: 2 day
+  parallel:
+    matrix:
+      - NUCLEI_DSP: ["rv32_NO", "rv64_NO", "N1", "N2", "N3"]
+  script:
+    - git clone -b $SDK_BRANCH $NUCLEI_SDK NMSIS/nuclei_sdk
+    - export NUCLEI_SDK_ROOT=$(readlink -f NMSIS/nuclei_sdk)
+    - pip3 install -r $NUCLEI_SDK_ROOT/tools/scripts/requirements.txt
+    - export NUCLEI_SDK_NMSIS=$(readlink -f NMSIS)
+    - export NMSIS_LOGS=$NUCLEI_SDK_NMSIS/Logs
+    # change ilm/dlm size from 64K to 1M for ${SOC}
+    - sed -i "s/64K/1M/g" $NUCLEI_SDK_ROOT/SoC/${SOC}/Board/nuclei_fpga_eval/Source/GCC/gcc_${SOC}_ilm.ld
+    # change ilm/dlm size from 64K to 1M for evalsoc from Nuclei SDK 0.6.0
+    - |
+      EVALSOC_MEMORY=$NUCLEI_SDK_ROOT/SoC/evalsoc/Board/nuclei_fpga_eval/Source/GCC/evalsoc.memory
+      if [ -f $EVALSOC_MEMORY ] ; then
+        echo "Maybe you are using >= Nuclei SDK 0.6.0, will sed and replace ilm/dlm memory size in $EVALSOC_MEMORY"
+        sed -i 's/\([ID]LM_MEMORY_SIZE\).*/\1 = 0x100000;/' $EVALSOC_MEMORY
+      fi
+    - mkdir $NMSIS_LOGS
+    - source NMSIS/env.sh
+    - export SILENT=1
+    - cd NMSIS
+    - rm -rf Library
+    - ln -s gen/Library .
+    - make gen_nnref_lib
+    - export SDK_VERB_BUILDMSG=0
+    - python3 $NUCLEI_SDK_ROOT/tools/scripts/nsdk_cli/nsdk_bench.py --appcfg Scripts/Runner/nmsis_nn_${NUCLEI_DSP}.json --logdir $NMSIS_LOGS/${NUCLEI_DSP}/nmsis_nn --parallel=-j --make_options "SIMU=$RUNTARGET" --run_target $RUNTARGET --run
+    # zip logs
+    - cd -
+    - zip -q -r log_nmsis_nn_${NUCLEI_DSP}.zip NMSIS/Logs
+    - rm -rf NMSIS/Logs
+
+test_dsp_library:
+  <<: *test_job_template_default
+  artifacts:
+    when: always
+    name: "nmsis_dsp_test_cycles_logs-job${CI_JOB_ID}-${CI_COMMIT_SHA::8}"
+    paths:
+      - log_nmsis_*.zip
+      - NMSIS/Logs
+    expire_in: 2 day
+  parallel:
+    matrix:
+      - NUCLEI_DSP: ["rv32_NO", "rv64_NO", "N1", "N2", "N3", "f16"]
+  script:
+    - git clone -b $SDK_BRANCH $NUCLEI_SDK NMSIS/nuclei_sdk
+    - export NUCLEI_SDK_ROOT=$(readlink -f NMSIS/nuclei_sdk)
+    - pip3 install -r $NUCLEI_SDK_ROOT/tools/scripts/requirements.txt
+    - export NUCLEI_SDK_NMSIS=$(readlink -f NMSIS)
+    - export NMSIS_LOGS=$NUCLEI_SDK_NMSIS/Logs
+    # change ilm/dlm size from 64K to 1M for ${SOC}
+    - sed -i "s/64K/1M/g" $NUCLEI_SDK_ROOT/SoC/${SOC}/Board/nuclei_fpga_eval/Source/GCC/gcc_${SOC}_ilm.ld
+    # change ilm/dlm size from 64K to 1M for evalsoc from Nuclei SDK 0.6.0
+    - |
+      EVALSOC_MEMORY=$NUCLEI_SDK_ROOT/SoC/evalsoc/Board/nuclei_fpga_eval/Source/GCC/evalsoc.memory
+      if [ -f $EVALSOC_MEMORY ] ; then
+        echo "Maybe you are using >= Nuclei SDK 0.6.0, will sed and replace ilm/dlm memory size in $EVALSOC_MEMORY"
+        sed -i 's/\([ID]LM_MEMORY_SIZE\).*/\1 = 0x100000;/' $EVALSOC_MEMORY
+      fi
+    - mkdir $NMSIS_LOGS
+    - source NMSIS/env.sh
+    - export SILENT=1
+    - cd NMSIS
+    - rm -rf Library
+    - ln -s gen/Library .
+    - export SDK_VERB_BUILDMSG=0
+    - python3 $NUCLEI_SDK_ROOT/tools/scripts/nsdk_cli/nsdk_bench.py --appcfg Scripts/Runner/nmsis_dsp_${NUCLEI_DSP}.json --logdir $NMSIS_LOGS/${NUCLEI_DSP}/nmsis_dsp --parallel=-j --make_options "SIMU=$RUNTARGET" --run_target $RUNTARGET --run
+    # zip logs
+    - cd -
+    - zip -q -r log_nmsis_dsp_${NUCLEI_DSP}.zip NMSIS/Logs
+    - rm -rf NMSIS/Logs
+
+release_benchmark:
+  stage: release
+  interruptible: true
+  only:
+    refs:
+      - master
+      - develop
+      - /^feature\/.*/
+      - merge_requests
+  artifacts:
+    name: "nmsis_test_logs-job${CI_JOB_ID}-${CI_COMMIT_SHA::8}"
+    paths:
+      - log_nmsis.zip
+    expire_in: 2 day
+  dependencies:
+    - test_nn_library
+    - test_dsp_library
+  script:
+    # unzip all log_nmsis_*.zip files
+    - for zf in `find . -name "log_nmsis*.zip"` ; do unzip -qo $zf ; done
+    - ls -lh NMSIS/Logs
+    - rm -f log_nmsis_*.zip
+    - zip -q -r log_nmsis.zip NMSIS/Logs
+
+release_nmsis:
+  stage: release
+  interruptible: true
+  only:
+    refs:
+      - master
+      - develop
+      - /^feature\/.*/
+      - merge_requests
+  artifacts:
+    name: "nmsis_release-$job${CI_JOB_ID}-{CI_COMMIT_SHA::8}"
+    paths:
+      - NMSIS/Core
+      - NMSIS/DSP/Include
+      - NMSIS/DSP/PrivateInclude
+      - NMSIS/NN/Include
+      - NMSIS/Library
+      - NMSIS/npk.yml
+      - NMSIS/build.mk
+    expire_in: 2 day
+  dependencies:
+    - build_library
+  script:
+    - ls -lh NMSIS/gen/
+    # choose proper built library to release
+    - rm -rf NMSIS/Library
+    - mv NMSIS/gen/Library NMSIS/
+    - ls -lh NMSIS/Library
+    - cat NMSIS/npk.yml
+
+deploy_website:
+  stage: release
+  only:
+    refs:
+      - master
+    changes:
+      - NMSIS/doc/source/**/**/**/*
+      - .gitlab-ci.yml
+      - NMSIS/Core/
+      - NMSIS/DSP/
+      - NMSIS/NN/
+  dependencies:
+    - build_doc
+  tags:
+    - env::shell
+    - host::whss1
+  script:
+    - ./.ci/ftp_deploy.sh $FTPUSER $FTPPWD $FTPSERVER NMSIS/doc/build/html nmsis
