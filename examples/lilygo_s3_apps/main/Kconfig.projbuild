@@ -1,0 +1,45 @@
+menu "App Configuration"
+
+    config MIC_SAMPLE_RATE
+        int "Microphone sample rate"
+        default 16000
+        help
+            Sample rete used in microphone and preprocessing.
+
+    choice TARGET
+        prompt "Target device"
+        default LILYGO_T_CIRCLE
+
+        config TARGET_LILYGO_T_CIRCLE
+            bool "LILYGO_T_CIRCLE"
+
+    endchoice
+
+    choice APP
+        prompt "Example application"
+        default APP_VOICE_RELAY
+
+        config APP_VOICE_RELAY
+            bool "VOICE_RELAY"
+        config APP_SOUND_EVENTS_DETECTION
+            bool "SOUND_EVENTS_DETECTION"
+
+    endchoice
+
+    choice SOUND_EVENTS_TYPE
+        depends on APP_SOUND_EVENTS_DETECTION
+        prompt "Type of sounds to detect"
+        default SOUND_EVENTS_BABY_CRY
+
+        config SOUND_EVENTS_BABY_CRY
+            bool "BABY_CRY"
+        config SOUND_EVENTS_GLASS_BREAKING
+            bool "GLASS_BREAKING"
+        config SOUND_EVENTS_BARK
+            bool "BARK"
+        config SOUND_EVENTS_COUGHING
+            bool "COUGHING"
+
+    endchoice
+
+endmenu
