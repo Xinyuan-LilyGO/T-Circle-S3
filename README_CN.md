@@ -103,7 +103,7 @@ T-Circle-S3是一款基于ESP32S3开发的板载0.75寸小屏的开发板，配�
 | [Voice_Speaker](./examples/Voice_Speaker) | `[Platformio IDE][espressif32-v6.5.0]`<br />`[Arduino IDE][esp32_v2.0.14]` |  |  |
 | [Voice_Speaker_APA102](./examples/Voice_Speaker_APA102) | `[Platformio IDE][espressif32-v6.5.0]`<br />`[Arduino IDE][esp32_v2.0.14]` |  |  |
 | [Wifi_Music](./examples/Wifi_Music) | `[Platformio IDE][espressif32-v6.5.0]`<br />`[Arduino IDE][esp32_v2.0.14]` |  |  |
-| [lilygo_s3_apps](https://github.com/Xinyuan-LilyGO/T-Circle-S3/tree/esp-idf-V4.4.8/examples/lilygo_s3_apps) | `[ESP-IDF][esp-idf-V4.4.8]` | 该示例为语音控制示例，由Grovety提供，以下是原始链接: <br /> [Grovety lilygo_s3_apps](https://github.com/Grovety/lilygo_s3_apps)| <p align="center" width="100%"> <img src="image/1.jpg" alt="example" width="10%"> </p> |
+| [lilygo_s3_apps](https://github.com/Xinyuan-LilyGO/T-Circle-S3/tree/esp-idf-V4.4.8/examples/lilygo_s3_apps) | `[ESP-IDF][esp-idf-V4.4.8]` | 该示例为语音控制示例，由Grovety提供，以下是原始链接: <br /> [Grovety lilygo_s3_apps](https://github.com/Grovety/lilygo_s3_apps)| <p align="center" width="100%"> <img src="image/1.jpg" alt="example" width="100%"> </p> |
 
 | Firmware | Description | Picture |
 | ------  | ------  | ------ |
