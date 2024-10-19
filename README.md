@@ -102,7 +102,7 @@ T-Circle-S3 is a development board with a 0.75-inch onboard small screen develop
 | [Voice_Speaker](./examples/Voice_Speaker) | `[Platformio IDE][espressif32-v6.5.0]`<br />`[Arduino IDE][esp32_v2.0.14]` |  |  |
 | [Voice_Speaker_APA102](./examples/Voice_Speaker_APA102) | `[Platformio IDE][espressif32-v6.5.0]`<br />`[Arduino IDE][esp32_v2.0.14]` |  |  |
 | [Wifi_Music](./examples/Wifi_Music) | `[Platformio IDE][espressif32-v6.5.0]`<br />`[Arduino IDE][esp32_v2.0.14]` |  |  |
-| [lilygo_s3_apps](https://github.com/Xinyuan-LilyGO/T-Circle-S3/tree/esp-idf-V4.4.8/examples/lilygo_s3_apps) | `[ESP-IDF][esp-idf-V4.4.8]` | This example is a voice control example provided by Grovety. Below is the original link: <br /> [Grovety lilygo_s3_apps](https://github.com/Grovety/lilygo_s3_apps)| <p align="center" width="50%"> <img src="image/1.jpg" alt="example" width="50%"> </p> |
+| [lilygo_s3_apps](https://github.com/Xinyuan-LilyGO/T-Circle-S3/tree/esp-idf-V4.4.8/examples/lilygo_s3_apps) | `[ESP-IDF][esp-idf-V4.4.8]` | This example is a voice control example provided by Grovety. Below is the original link: <br /> [Grovety lilygo_s3_apps](https://github.com/Grovety/lilygo_s3_apps)| <p align="center" width="100%"> <img src="image/1.jpg" alt="example" width="50%"> </p> |
 
 | Firmware | Description | Picture |
 | ------  | ------  | ------ |
