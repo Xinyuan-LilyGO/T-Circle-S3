@@ -1,0 +1,31 @@
+#######################################
+# Syntax Coloring Map For DFrobot_MSM261
+#######################################
+
+#######################################
+# Datatypes (KEYWORD1)
+#######################################
+
+DFRobot_Microphone	KEYWORD1
+DFRobot_BluetoothA2DPSource	KEYWORD1
+
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+
+begin	KEYWORD2
+read	KEYWORD2
+createWavHeader	KEYWORD2
+
+#######################################
+# Instances (KEYWORD2)
+#######################################
+
+
+#######################################
+# Constants (LITERAL1)
+#######################################
+eLiftChannel	LITERAL1
+eRightChannel	LITERAL1
+
+
