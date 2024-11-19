@@ -4,23 +4,27 @@
  * @Author: LILYGO_L
  * @Date: 2023-09-11 16:13:14
  * @LastEditors: Please set LastEditors
- * @LastEditTime: 2024-10-19 10:25:54
+ * @LastEditTime: 2024-11-19 10:08:43
  * @License: GPL 3.0
 -->
 <h1 align = "center">T-Circle-S3</h1>
+
+<p align="center" width="100%">
+    <img src="image/12.jpg" alt="">
+</p>
 
 ## **[English](./README.md) | 中文**
 
 ## 版本迭代:
 | Version                               | Update date                       |
 | :-------------------------------: | :-------------------------------: |
-| T-Circle-S3_V1.0                      | 2024-08-15                         |
+| T-Circle-S3_V1.0                      | 2024-08-15                    |
 
 ## 购买链接
 
 | Product                     | SOC           |  FLASH  |  PSRAM   | Link                   |
 | :------------------------: | :-----------: |:-------: | :---------: | :------------------: |
-| T-Circle-S3_V1.0   | ESP32S3R8 |   16M   | 8M (Octal SPI) |  [暂未售卖]()  |
+| T-Circle-S3_V1.0   | ESP32S3R8 |   16M   | 8M (Octal SPI) |  [LILYGO Mall](https://lilygo.cc/products/t-circle-s3?_pos=1&_sid=6fa6d0d3e&_ss=r)   |
 
 ## 目录
 - [描述](#描述)
@@ -40,10 +44,23 @@ T-Circle-S3是一款基于ESP32S3开发的板载0.75寸小屏的开发板，配�
 
 ## 预览
 
-### PCB板
+### 实物图
 
-### 渲染图
+<p align="center" width="100%">
+    <img src="image/12.jpg" alt="">
+</p>
 
+---
+
+<p align="center" width="100%">
+    <img src="image/13.jpg" alt="">
+</p>
+
+---
+
+<p align="center" width="100%">
+    <img src="image/14.jpg" alt="">
+</p>
 
 ## 模块
 
@@ -148,6 +165,7 @@ T-Circle-S3是一款基于ESP32S3开发的板载0.75寸小屏的开发板，配�
 | Flash Mode                         | QIO 80MHz                         |
 | Flash Size                           | 16MB (128Mb)                    |
 | Core Debug Level                | None                                 |
+| Partition Scheme                | 16M Flash (3MB APP/9.9MB FATFS) |
 | PSRAM                                | OPI PSRAM                         |
 | Arduino Runs On                  | Core 1                               |
 | Events Run On                     | Core 1                               |        

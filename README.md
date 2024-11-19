@@ -4,10 +4,14 @@
  * @Author: LILYGO_L
  * @Date: 2023-09-11 16:13:14
  * @LastEditors: Please set LastEditors
- * @LastEditTime: 2024-10-19 10:27:34
+ * @LastEditTime: 2024-11-19 10:06:46
  * @License: GPL 3.0
 -->
 <h1 align = "center">T-Circle-S3</h1>
+
+<p align="center" width="100%">
+    <img src="image/12.jpg" alt="">
+</p>
 
 ## **English | [中文](./README_CN.md)**
 
@@ -20,7 +24,7 @@
 
 | Product                     | SOC           |  FLASH  |  PSRAM   | Link                   |
 | :------------------------: | :-----------: |:-------: | :---------: | :------------------: |
-| T-Circle-S3_V1.0   | ESP32S3R8 |   16M   | 8M (Octal SPI) |   [Not yet sold]()  |
+| T-Circle-S3_V1.0   | ESP32S3R8 |   16M   | 8M (Octal SPI) |  [LILYGO Mall](https://lilygo.cc/products/t-circle-s3?_pos=1&_sid=6fa6d0d3e&_ss=r)  |
 
 ## Directory
 - [Describe](#describe)
@@ -40,9 +44,23 @@ T-Circle-S3 is a development board with a 0.75-inch onboard small screen develop
 
 ## Preview
 
-### PCB board
+### Actual Product Image
 
-### Rendering
+<p align="center" width="100%">
+    <img src="image/12.jpg" alt="">
+</p>
+
+---
+
+<p align="center" width="100%">
+    <img src="image/13.jpg" alt="">
+</p>
+
+---
+
+<p align="center" width="100%">
+    <img src="image/14.jpg" alt="">
+</p>
 
 ## Module
 
@@ -51,7 +69,7 @@ T-Circle-S3 is a development board with a 0.75-inch onboard small screen develop
 * Chip: ESP32-S3-R8
 * PSRAM: 8M (Octal SPI) 
 * FLASH: 16M
-* For more details, please visit[Espressif ESP32-S3 Datashee](https://www.espressif.com.cn/sites/default/files/documentation/esp32-s3_datasheet_en.pdf)
+* For more details, please visit [Espressif ESP32-S3 Datasheet](https://www.espressif.com.cn/sites/default/files/documentation/esp32-s3_datasheet_en.pdf)
 
 ### 2. Screen
 
@@ -146,6 +164,7 @@ T-Circle-S3 is a development board with a 0.75-inch onboard small screen develop
 | Flash Mode                         | QIO 80MHz                         |
 | Flash Size                           | 16MB (128Mb)                    |
 | Core Debug Level                | None                                 |
+| Partition Scheme                | 16M Flash (3MB APP/9.9MB FATFS) |
 | PSRAM                                | OPI PSRAM                         |
 | Arduino Runs On                  | Core 1                               |
 | Events Run On                     | Core 1                               |           
