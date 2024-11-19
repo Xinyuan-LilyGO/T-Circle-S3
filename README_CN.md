@@ -4,7 +4,7 @@
  * @Author: LILYGO_L
  * @Date: 2023-09-11 16:13:14
  * @LastEditors: Please set LastEditors
- * @LastEditTime: 2024-11-19 10:08:43
+ * @LastEditTime: 2024-11-19 10:29:59
  * @License: GPL 3.0
 -->
 <h1 align = "center">T-Circle-S3</h1>
@@ -259,3 +259,4 @@ T-Circle-S3是一款基于ESP32S3开发的板载0.75寸小屏的开发板，配�
 * [ESP32-audioI2S-3.0.6](https://github.com/schreibfaul1/ESP32-audioI2S)
 * [FastLED-3.6.0](https://github.com/FastLED/FastLED)
 * [TFT_eSPI-2.5.43](https://github.com/Bodmer/TFT_eSPI)
+* [DFRobot_MSM261](https://github.com/DFRobot/DFrobot_MSM261)
