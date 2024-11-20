@@ -4,7 +4,7 @@
  * @Author: LILYGO_L
  * @Date: 2023-09-11 16:13:14
  * @LastEditors: Please set LastEditors
- * @LastEditTime: 2024-11-19 10:29:59
+ * @LastEditTime: 2024-11-20 14:50:55
  * @License: GPL 3.0
 -->
 <h1 align = "center">T-Circle-S3</h1>
@@ -124,10 +124,10 @@ T-Circle-S3是一款基于ESP32S3开发的板载0.75寸小屏的开发板，配�
 
 | Firmware | Description | Picture |
 | ------  | ------  | ------ |
-| [Original_Test_V1.0.0](./firmware/[T-Circle-S3_V1.0][Original_Test]_firmware_V1.0.0.bin) | 初始版本 |  |
-| [GFX_Wifi_AP_Contract_V1.0.0](./firmware/[T-Circle-S3_V1.0][GFX_Wifi_AP_Contract]_firmware_V1.0.0) | 初始版本 |  |
-| [GFX_Wifi_STA_Contract_V1.0.0](./firmware/[T-Circle-S3_V1.0][GFX_Wifi_STA_Contract]_firmware_V1.0.0) | 初始版本 |  |
-| [lilygo_s3_apps_V1.0.0](./firmware/[T-Circle-S3_V1.0]_[lilygo_s3_apps]_firmware_V1.0.0.bin) | 初始版本 |  |
+| [Original_Test](./firmware/[T-Circle-S3_V1.0][Original_Test]_firmware_V1.0.1.bin) | 初始版本 |  |
+| [GFX_Wifi_AP_Contract](./firmware/[T-Circle-S3_V1.0][GFX_Wifi_AP_Contract]_firmware_V1.0.0) | 初始版本 |  |
+| [GFX_Wifi_STA_Contract](./firmware/[T-Circle-S3_V1.0][GFX_Wifi_STA_Contract]_firmware_V1.0.0) | 初始版本 |  |
+| [lilygo_s3_apps](./firmware/[T-Circle-S3_V1.0]_[lilygo_s3_apps]_firmware_V1.0.0.bin) | 初始版本 |  |
 
 
 ### PlatformIO
