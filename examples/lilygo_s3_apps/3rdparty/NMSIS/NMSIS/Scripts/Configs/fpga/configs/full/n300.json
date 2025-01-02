@@ -1,0 +1,22 @@
+{
+    "build_config": {
+        "SOC": "evalsoc",
+        "BOARD": "nuclei_fpga_eval",
+        "DOWNLOAD": "ilm",
+        "CPU_SERIES": "300"
+    },
+    "build_configs": {
+        "rv32imac": {"CORE":"n300"},
+        "rv32imacb": {"CORE":"n300", "ARCH_EXT":"_zba_zbb_zbc_zbs"},
+        "rv32imacp": {"CORE":"n300", "ARCH_EXT":"_xxldsp"},
+        "rv32imacbp": {"CORE":"n300", "ARCH_EXT":"_zba_zbb_zbc_zbs_xxldspn3x"},
+        "rv32imafc": {"CORE":"n300f", "ARCH_EXT":""},
+        "rv32imafcb": {"CORE":"n300f", "ARCH_EXT":"_zba_zbb_zbc_zbs"},
+        "rv32imafcp": {"CORE":"n300f", "ARCH_EXT":"_xxldsp"},
+        "rv32imafcbp": {"CORE":"n300f", "ARCH_EXT":"_zba_zbb_zbc_zbs_xxldspn3x"},
+        "rv32imafdc": {"CORE":"n300fd", "ARCH_EXT":""},
+        "rv32imafdcb": {"CORE":"n300fd", "ARCH_EXT":"_zba_zbb_zbc_zbs"},
+        "rv32imafdcp": {"CORE":"n300fd", "ARCH_EXT":"_xxldsp"},
+        "rv32imafdcbp": {"CORE":"n300fd", "ARCH_EXT":"_zba_zbb_zbc_zbs_xxldspn3x"}
+    }
+}
