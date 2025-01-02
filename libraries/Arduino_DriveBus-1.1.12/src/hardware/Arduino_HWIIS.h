@@ -8,8 +8,8 @@
  * @version: V1.0.0
  * @Author: Xk_w
  * @Date: 2023-12-20 15:45:17
- * @LastEditors: Xk_w
- * @LastEditTime: 2023-12-22 14:04:29
+ * @LastEditors: Please set LastEditors
+ * @LastEditTime: 2024-12-17 10:18:28
  * @License: GPL 3.0
  */
 #pragma once
@@ -26,8 +26,8 @@ public:
     bool begin(int8_t device_state = DRIVEBUS_DEFAULT_VALUE,
                int32_t sample_rate = 44100UL, int32_t bits_per_sample = 16) override;
 
-    size_t Read(char *data, size_t len) override;
-    size_t Write(char *data, size_t len) override;
+    size_t Read(void *data, size_t len) override;
+    size_t Write(const void *data, size_t len) override;
 
 private:
     i2s_port_t _iis_num;

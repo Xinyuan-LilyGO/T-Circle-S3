@@ -6,8 +6,8 @@
  * @version: V1.0.0
  * @Author: Xk_w
  * @Date: 2023-12-21 14:23:07
- * @LastEditors: Xk_w
- * @LastEditTime: 2023-12-22 14:18:35
+ * @LastEditors: Please set LastEditors
+ * @LastEditTime: 2024-12-17 10:18:52
  * @License: GPL 3.0
  */
 #pragma once
@@ -22,5 +22,5 @@ public:
     bool begin(int8_t device_state = DRIVEBUS_DEFAULT_VALUE,
                int32_t sample_rate = 44100UL, int32_t bits_per_sample = 16) override;
 
-    bool IIS_Read_Data(char *data, size_t length) override;
+    bool IIS_Read_Data(void *data, size_t length) override;
 };

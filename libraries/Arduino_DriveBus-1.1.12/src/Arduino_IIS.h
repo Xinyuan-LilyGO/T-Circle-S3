@@ -9,8 +9,8 @@
  * @version: V1.0.0
  * @Author: Xk_w
  * @Date: 2023-11-16 16:58:05
- * @LastEditors: Xk_w
- * @LastEditTime: 2024-02-28 14:51:20
+ * @LastEditors: Please set LastEditors
+ * @LastEditTime: 2024-12-17 10:19:16
  * @License: GPL 3.0
  */
 #pragma once
@@ -33,8 +33,8 @@ public:
 
     virtual bool IIS_Device_Switch(bool device_switch);
 
-    virtual bool IIS_Read_Data(char *data, size_t length);
-    virtual bool IIS_Write_Data(char *data, size_t length);
+    virtual bool IIS_Read_Data(void *data, size_t length);
+    virtual bool IIS_Write_Data(const void *data, size_t length);
 
 protected:
     std::shared_ptr<Arduino_IIS_DriveBus> _bus;

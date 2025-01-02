@@ -3,8 +3,8 @@
  * @version: V1.0.0
  * @Author: Xk_w
  * @Date: 2023-12-20 15:46:16
- * @LastEditors: LILYGO_L
- * @LastEditTime: 2024-04-08 16:36:26
+ * @LastEditors: Please set LastEditors
+ * @LastEditTime: 2024-12-17 10:18:34
  * @License: GPL 3.0
  */
 #include "Arduino_HWIIS.h"
@@ -116,14 +116,14 @@ bool Arduino_HWIIS::begin(int8_t device_state, int32_t sample_rate, int32_t bits
     return true;
 }
 
-size_t Arduino_HWIIS::Read(char *data, size_t length)
+size_t Arduino_HWIIS::Read(void *data, size_t length)
 {
     size_t temp_buf;
     i2s_read(_iis_num, data, length, &temp_buf, length);
     return temp_buf;
 }
 
-size_t Arduino_HWIIS::Write(char *data, size_t length)
+size_t Arduino_HWIIS::Write(const void *data, size_t length)
 {
     size_t temp_buf;
     i2s_write(_iis_num, data, length, &temp_buf, length);

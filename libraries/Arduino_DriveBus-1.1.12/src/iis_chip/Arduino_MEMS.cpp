@@ -20,7 +20,7 @@ bool Arduino_MEMS::begin(int8_t device_state, int32_t sample_rate, int32_t bits_
     return Arduino_IIS::begin(device_state, sample_rate, bits_per_sample);
 }
 
-bool Arduino_MEMS::IIS_Read_Data(char *data, size_t length)
+bool Arduino_MEMS::IIS_Read_Data(void *data, size_t length)
 {
     return _bus->IIS_Read(data, length);
 }

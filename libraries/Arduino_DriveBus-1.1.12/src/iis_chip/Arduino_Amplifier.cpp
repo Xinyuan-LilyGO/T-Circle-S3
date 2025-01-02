@@ -3,8 +3,8 @@
  * @version: V1.0.0
  * @Author: Xk_w
  * @Date: 2023-12-21 14:04:34
- * @LastEditors: Xk_w
- * @LastEditTime: 2023-12-22 14:11:18
+ * @LastEditors: Please set LastEditors
+ * @LastEditTime: 2024-12-17 10:10:55
  * @License: GPL 3.0
  */
 
@@ -20,7 +20,7 @@ bool Arduino_Amplifier::begin(int8_t device_state, int32_t sample_rate, int32_t 
     return Arduino_IIS::begin(device_state, sample_rate, bits_per_sample);
 }
 
-bool Arduino_Amplifier::IIS_Write_Data(char *data, size_t length)
+bool Arduino_Amplifier::IIS_Write_Data(const void *data, size_t length)
 {
     return _bus->IIS_Write(data, length);
 }

@@ -3,8 +3,8 @@
  * @version: V1.1.2
  * @Author: Xk_w
  * @Date: 2023-11-16 15:53:46
- * @LastEditors: Xk_w
- * @LastEditTime: 2024-05-31 16:12:24
+ * @LastEditors: Please set LastEditors
+ * @LastEditTime: 2024-12-17 10:19:03
  * @License: GPL 3.0
  */
 #include "Arduino_DriveBus.h"
@@ -326,7 +326,7 @@ bool Arduino_IIC_DriveBus::IIC_ReadC16D8(uint8_t device_address, uint16_t c, uin
 
 Arduino_IIS_DriveBus::Arduino_IIS_DriveBus() {}
 
-bool Arduino_IIS_DriveBus::IIS_Read(char *data, size_t length)
+bool Arduino_IIS_DriveBus::IIS_Read(void *data, size_t length)
 {
     size_t temp_buf = Read(data, length);
 
@@ -338,7 +338,7 @@ bool Arduino_IIS_DriveBus::IIS_Read(char *data, size_t length)
     return true;
 }
 
-bool Arduino_IIS_DriveBus::IIS_Write(char *data, size_t length)
+bool Arduino_IIS_DriveBus::IIS_Write(const void *data, size_t length)
 {
     size_t temp_buf = Write(data, length);
 

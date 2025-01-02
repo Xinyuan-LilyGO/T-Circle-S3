@@ -9,8 +9,8 @@
  * @version: V1.1.5
  * @Author: Xk_w
  * @Date: 2023-11-16 15:53:46
- * @LastEditors: Xk_w
- * @LastEditTime: 2024-05-31 16:14:55
+ * @LastEditors: Please set LastEditors
+ * @LastEditTime: 2024-12-17 10:21:10
  * @License: GPL 3.0
  */
 #pragma once
@@ -80,11 +80,11 @@ public:
     virtual bool begin(int8_t device_state = DRIVEBUS_DEFAULT_VALUE,
                        int32_t sample_rate = 44100UL, int32_t bits_per_sample = 16) = 0;
 
-    virtual size_t Read(char *data, size_t length) = 0;
-    virtual size_t Write(char *data, size_t length) = 0;
+    virtual size_t Read(void *data, size_t length) = 0;
+    virtual size_t Write(const void *data, size_t length) = 0;
 
-    bool IIS_Read(char *data, size_t length);
-    bool IIS_Write(char *data, size_t length);
+    bool IIS_Read(void *data, size_t length);
+    bool IIS_Write(const void *data, size_t length);
 
 protected:
     int8_t _device_state;

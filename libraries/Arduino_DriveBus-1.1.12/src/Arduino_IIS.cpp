@@ -3,8 +3,8 @@
  * @version: V1.0.0
  * @Author: Xk_w
  * @Date: 2023-11-16 16:58:05
- * @LastEditors: Xk_w
- * @LastEditTime: 2024-02-28 14:53:14
+ * @LastEditors: Please set LastEditors
+ * @LastEditTime: 2024-12-17 10:19:11
  * @License: GPL 3.0
  */
 #include "Arduino_IIS.h"
@@ -52,13 +52,13 @@ bool Arduino_IIS::IIS_Device_Switch(bool device_switch)
     return false;
 }
 
-bool Arduino_IIS::IIS_Read_Data(char *data, size_t len)
+bool Arduino_IIS::IIS_Read_Data(void *data, size_t len)
 {
     log_e("No 'IIS_Read_Data' fictional function has been created.");
     return -1;
 }
 
-bool Arduino_IIS::IIS_Write_Data(char *data, size_t len)
+bool Arduino_IIS::IIS_Write_Data(const void *data, size_t len)
 {
     log_e("No 'IIS_Write_Data' fictional function has been created.");
     return -1;

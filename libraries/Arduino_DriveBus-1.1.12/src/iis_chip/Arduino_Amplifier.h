@@ -23,5 +23,5 @@ public:
     bool begin(int8_t device_state = DRIVEBUS_DEFAULT_VALUE,
                int32_t sample_rate = 44100UL, int32_t bits_per_sample = 16) override;
 
-    bool IIS_Write_Data(char *data, size_t length) override;
+    bool IIS_Write_Data(const void *data, size_t length) override;
 };
