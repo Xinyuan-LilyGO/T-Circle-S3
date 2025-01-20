@@ -1,10 +1,8 @@
 /*
  * @Description: None
- * @version: V1.0.0
  * @Author: None
  * @Date: 2023-08-16 14:24:03
- * @LastEditors: Xk_w
- * @LastEditTime: 2024-06-07 11:13:25
+ * @LastEditTime: 2025-01-20 10:12:01
  * @License: GPL 3.0
  */
 #pragma once
