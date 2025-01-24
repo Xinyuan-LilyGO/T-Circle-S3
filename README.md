@@ -4,7 +4,7 @@
  * @Author: LILYGO_L
  * @Date: 2023-09-11 16:13:14
  * @LastEditors: Please set LastEditors
- * @LastEditTime: 2024-11-20 14:35:57
+ * @LastEditTime: 2025-01-24 09:34:28
  * @License: GPL 3.0
 -->
 <h1 align = "center">T-Circle-S3</h1>
@@ -103,24 +103,27 @@ T-Circle-S3 is a development board with a 0.75-inch onboard small screen develop
 
 ### Examples Support
 
-| Example | Support IDE And Version| Description | Picture |
-| ------  | ------  | ------ | ------ | 
-| [Animated_Eyes_1](./examples/Animated_Eyes_1) | `[Platformio IDE][espressif32-v6.5.0]`<br />`[Arduino IDE][esp32_v2.0.14]` |  |  |
-| [APA102_Blink](./examples/APA102_Blink) | `[Platformio IDE][espressif32-v6.5.0]`<br />`[Arduino IDE][esp32_v2.0.14]` |  |  |
-| [CST816D](./examples/CST816D) | `[Platformio IDE][espressif32-v6.5.0]`<br />`[Arduino IDE][esp32_v2.0.14]` |  |  |
-| [DMIC_ReadData](./examples/DMIC_ReadData) | `[Platformio IDE][espressif32-v6.5.0]`<br />`[Arduino IDE][esp32_v2.0.14]` |  |  |
-| [DMIC_ReadData](./examples/DMIC_ReadData) | `[Platformio IDE][espressif32-v6.5.0]`<br />`[Arduino IDE][esp32_v2.0.14]` |  |  |
-| [GFX](./examples/GFX) | `[Platformio IDE][espressif32-v6.5.0]`<br />`[Arduino IDE][esp32_v2.0.14]` |  |  |
-| [GFX_CST816D_Image](./examples/GFX_CST816D_Image) | `[Platformio IDE][espressif32-v6.5.0]`<br />`[Arduino IDE][esp32_v2.0.14]` |  |  |
-| [GFX_Wifi_AP_Contract](./examples/GFX_Wifi_AP_Contract) | `[Platformio IDE][espressif32-v6.5.0]`<br />`[Arduino IDE][esp32_v2.0.14]` |  |  |
-| [GFX_Wifi_STA_Contract](./examples/GFX_Wifi_STA_Contract) | `[Platformio IDE][espressif32-v6.5.0]`<br />`[Arduino IDE][esp32_v2.0.14]` |  |  |
-| [IIC_Scan_2](./examples/IIC_Scan_2) | `[Platformio IDE][espressif32-v6.5.0]`<br />`[Arduino IDE][esp32_v2.0.14]` |  |  |
-| [Original_Test](./examples/Original_Test) | `[Platformio IDE][espressif32-v6.5.0]`<br />`[Arduino IDE][esp32_v2.0.14]` | Original factory test files |  |
-| [TFT](./examples/TFT) | `[Platformio IDE][espressif32-v6.5.0]`<br />`[Arduino IDE][esp32_v2.0.14]` |  |  |
-| [Voice_Speaker](./examples/Voice_Speaker) | `[Platformio IDE][espressif32-v6.5.0]`<br />`[Arduino IDE][esp32_v2.0.14]` |  |  |
-| [Voice_Speaker_APA102](./examples/Voice_Speaker_APA102) | `[Platformio IDE][espressif32-v6.5.0]`<br />`[Arduino IDE][esp32_v2.0.14]` |  |  |
-| [Wifi_Music](./examples/Wifi_Music) | `[Platformio IDE][espressif32-v6.5.0]`<br />`[Arduino IDE][esp32_v2.0.14]` |  |  |
-| [lilygo_s3_apps](https://github.com/Xinyuan-LilyGO/T-Circle-S3/tree/esp-idf-V4.4.8/examples/lilygo_s3_apps) | `[ESP-IDF][esp-idf-V4.4.8]` | This example is a voice control example provided by Grovety. Below is the original link: <br /> [Grovety lilygo_s3_apps](https://github.com/Grovety/lilygo_s3_apps)| <p align="center" width="100%"> <img src="image/1.jpg" alt="example" width="100%"> </p> |
+| Example | `[Platformio IDE][espressif32-v6.5.0]`<br />`[Arduino IDE][esp32_v2.0.14]` | `[ESP-IDF][esp-idf-V4.4.8]`| `[ESP-IDF][esp-idf-V5.3.2]`| Description | Picture |
+| ------  | ------  | ------ | ------ | ------ | ------ | 
+| [Animated_Eyes_1](./examples/Animated_Eyes_1) | ![alt text][supported] | || |  |
+| [APA102_Blink](./examples/APA102_Blink) |![alt text][supported] | | ||  |
+| [CST816D](./examples/CST816D) |![alt text][supported] |  |  |
+| [DMIC_ReadData](./examples/DMIC_ReadData) |![alt text][supported] | || |  |
+| [DMIC_ReadData](./examples/DMIC_ReadData) |![alt text][supported] | || |  |
+| [GFX](./examples/GFX) |![alt text][supported] |  |  |
+| [GFX_CST816D_Image](./examples/GFX_CST816D_Image) |![alt text][supported] | | ||  |
+| [GFX_Wifi_AP_Contract](./examples/GFX_Wifi_AP_Contract) |![alt text][supported] | || |  |
+| [GFX_Wifi_STA_Contract](./examples/GFX_Wifi_STA_Contract) |![alt text][supported] | || |  |
+| [IIC_Scan_2](./examples/IIC_Scan_2) |![alt text][supported] | | ||  |
+| [Original_Test](./examples/Original_Test) |![alt text][supported] ||| Original factory test files |  |
+| [TFT](./examples/TFT) |![alt text][supported] | || |  |
+| [Voice_Speaker](./examples/Voice_Speaker) |![alt text][supported] |  ||  |  |
+| [Voice_Speaker_APA102](./examples/Voice_Speaker_APA102) |![alt text][supported] | ||  |  |
+| [Wifi_Music](./examples/Wifi_Music) |![alt text][supported] | ||  |  |
+| [lilygo_s3_apps](https://github.com/Xinyuan-LilyGO/T-Circle-S3/tree/esp-idf-V4.4.8/examples/lilygo_s3_apps) ||![alt text][supported] | | This example is a voice control example provided by Grovety. Below is the original link: <br /> [Grovety lilygo_s3_apps](https://github.com/Grovety/lilygo_s3_apps)| <p align="center" width="100%"> <img src="image/1.jpg" alt="example" width="100%"> </p> |
+| [XiaoZhi_AI_Chatbot](https://github.com/78/xiaozhi-esp32?tab=readme-ov-file) | ||![alt text][supported] | This example is a Xiaozhi AI example, provided by Xiaoxia.| <p align="center"> <img src="image/15.jpg" alt="example" width="100%"> </p> |
+
+[supported]: https://img.shields.io/badge/-supported-green "example"
 
 | Firmware | Description | Picture |
 | ------  | ------  | ------ |

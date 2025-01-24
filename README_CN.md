@@ -4,7 +4,7 @@
  * @Author: LILYGO_L
  * @Date: 2023-09-11 16:13:14
  * @LastEditors: Please set LastEditors
- * @LastEditTime: 2025-01-24 09:20:49
+ * @LastEditTime: 2025-01-24 09:31:36
  * @License: GPL 3.0
 -->
 <h1 align = "center">T-Circle-S3</h1>
@@ -105,28 +105,30 @@ T-Circle-S3是一款基于ESP32S3开发的板载0.75寸小屏的开发板，配�
 
 | Example | `[Platformio IDE][espressif32-v6.5.0]`<br />`[Arduino IDE][esp32_v2.0.14]` | `[ESP-IDF][esp-idf-V4.4.8]`| `[ESP-IDF][esp-idf-V5.3.2]`| Description | Picture |
 | ------  | ------  | ------ | ------ | ------ | ------ | 
-| [Animated_Eyes_1](./examples/Animated_Eyes_1) | <p align="center"> <img src="https://img.shields.io/badge/-supported-green" alt="example" width="25%"> </p> | || |  |
-| [APA102_Blink](./examples/APA102_Blink) | <p align="center"> <img src="https://img.shields.io/badge/-supported-green" alt="example" width="25%"> </p> | | ||  |
-| [CST816D](./examples/CST816D) | <p align="center"> <img src="https://img.shields.io/badge/-supported-green" alt="example" width="25%"> </p> |  |  |
-| [DMIC_ReadData](./examples/DMIC_ReadData) | <p align="center"> <img src="https://img.shields.io/badge/-supported-green" alt="example" width="25%"> </p> | || |  |
-| [DMIC_ReadData](./examples/DMIC_ReadData) | <p align="center"> <img src="https://img.shields.io/badge/-supported-green" alt="example" width="25%"> </p> | || |  |
-| [GFX](./examples/GFX) | <p align="center"> <img src="https://img.shields.io/badge/-supported-green" alt="example" width="25%"> </p> |  |  |
-| [GFX_CST816D_Image](./examples/GFX_CST816D_Image) | <p align="center"> <img src="https://img.shields.io/badge/-supported-green" alt="example" width="25%"> </p> | | ||  |
-| [GFX_Wifi_AP_Contract](./examples/GFX_Wifi_AP_Contract) | <p align="center"> <img src="https://img.shields.io/badge/-supported-green" alt="example" width="25%"> </p> | || |  |
-| [GFX_Wifi_STA_Contract](./examples/GFX_Wifi_STA_Contract) | <p align="center"> <img src="https://img.shields.io/badge/-supported-green" alt="example" width="25%"> </p> | || |  |
-| [IIC_Scan_2](./examples/IIC_Scan_2) | <p align="center"> <img src="https://img.shields.io/badge/-supported-green" alt="example" width="25%"> </p> | | ||  |
-| [Original_Test](./examples/Original_Test) | <p align="center"> <img src="https://img.shields.io/badge/-supported-green" alt="example" width="25%"> </p> ||| 出厂初始测试文件 |  |
-| [TFT](./examples/TFT) | <p align="center"> <img src="https://img.shields.io/badge/-supported-green" alt="example" width="25%"> </p> | || |  |
-| [Voice_Speaker](./examples/Voice_Speaker) | <p align="center"> <img src="https://img.shields.io/badge/-supported-green" alt="example" width="25%"> </p> |  ||  |  |
-| [Voice_Speaker_APA102](./examples/Voice_Speaker_APA102) | <p align="center"> <img src="https://img.shields.io/badge/-supported-green" alt="example" width="25%"> </p> | ||  |  |
-| [Wifi_Music](./examples/Wifi_Music) | <p align="center"> <img src="https://img.shields.io/badge/-supported-green" alt="example" width="25%"> </p> | ||  |  |
-| [lilygo_s3_apps](https://github.com/Xinyuan-LilyGO/T-Circle-S3/tree/esp-idf-V4.4.8/examples/lilygo_s3_apps) | | <p align="center"> <img src="https://img.shields.io/badge/-supported-green" alt="example" width="25%"> </p> || 该示例为语音控制示例，由Grovety提供，以下是原始链接: <br /> [Grovety lilygo_s3_apps](https://github.com/Grovety/lilygo_s3_apps)| <p align="center" width="100%"> <img src="image/1.jpg" alt="example" width="100%"> </p> |
-| [XiaoZhi_AI_Chatbot](https://github.com/78/xiaozhi-esp32?tab=readme-ov-file) | || <p align="center"> <img src="https://img.shields.io/badge/-supported-green" alt="example" width="25%"> </p> | 该示例为小智AI示例，由Xiaoxia提供| <p align="center" width="100%"> <img src="image/15.jpg" alt="example" width="100%"> </p> |
+| [Animated_Eyes_1](./examples/Animated_Eyes_1) | ![alt text][supported] | || |  |
+| [APA102_Blink](./examples/APA102_Blink) |![alt text][supported] | | ||  |
+| [CST816D](./examples/CST816D) |![alt text][supported] |  |  |
+| [DMIC_ReadData](./examples/DMIC_ReadData) |![alt text][supported] | || |  |
+| [DMIC_ReadData](./examples/DMIC_ReadData) |![alt text][supported] | || |  |
+| [GFX](./examples/GFX) |![alt text][supported] |  |  |
+| [GFX_CST816D_Image](./examples/GFX_CST816D_Image) |![alt text][supported] | | ||  |
+| [GFX_Wifi_AP_Contract](./examples/GFX_Wifi_AP_Contract) |![alt text][supported] | || |  |
+| [GFX_Wifi_STA_Contract](./examples/GFX_Wifi_STA_Contract) |![alt text][supported] | || |  |
+| [IIC_Scan_2](./examples/IIC_Scan_2) |![alt text][supported] | | ||  |
+| [Original_Test](./examples/Original_Test) |![alt text][supported] ||| 出厂初始测试文件 |  |
+| [TFT](./examples/TFT) |![alt text][supported] | || |  |
+| [Voice_Speaker](./examples/Voice_Speaker) |![alt text][supported] |  ||  |  |
+| [Voice_Speaker_APA102](./examples/Voice_Speaker_APA102) |![alt text][supported] | ||  |  |
+| [Wifi_Music](./examples/Wifi_Music) |![alt text][supported] | ||  |  |
+| [lilygo_s3_apps](https://github.com/Xinyuan-LilyGO/T-Circle-S3/tree/esp-idf-V4.4.8/examples/lilygo_s3_apps) | |![alt text][supported] || 该示例为语音控制示例，由Grovety提供，以下是原始链接: <br /> [Grovety lilygo_s3_apps](https://github.com/Grovety/lilygo_s3_apps)| <p align="center"> <img src="image/1.jpg" alt="example" width="100%"> </p> |
+| [XiaoZhi_AI_Chatbot](https://github.com/78/xiaozhi-esp32?tab=readme-ov-file) | ||![alt text][supported] | 该示例为小智AI示例，由Xiaoxia提供| <p align="center"> <img src="image/15.jpg" alt="example" width="100%"> </p> |
+
+[supported]: https://img.shields.io/badge/-supported-green "example"
 
 | Firmware | Description | Picture |
 | ------  | ------  | ------ |
 | [Original_Test](./firmware/[T-Circle-S3_V1.0][Original_Test]_firmware_V1.0.1.bin) | 初始版本 |  |
-| [GFX_Wifi_AP_Contract](./firmware/[T-Circle-S3_V1.0][GFX_Wifi_AP_Contract]_firmware_V1.0.0) | 初始版本 |  |
+| [GFX_Wifi_AP_Contract](./firmware/[T-Circle-S3_V1.0] [GFX_Wifi_AP_Contract]_firmware_V1.0.0) | 初始版本 |  |
 | [GFX_Wifi_STA_Contract](./firmware/[T-Circle-S3_V1.0][GFX_Wifi_STA_Contract]_firmware_V1.0.0) | 初始版本 |  |
 | [lilygo_s3_apps](./firmware/[T-Circle-S3_V1.0]_[lilygo_s3_apps]_firmware_V1.0.0.bin) | 初始版本 |  |
 
