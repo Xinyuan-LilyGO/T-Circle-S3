@@ -4,7 +4,7 @@
  * @Author: LILYGO_L
  * @Date: 2023-09-11 16:13:14
  * @LastEditors: Please set LastEditors
- * @LastEditTime: 2025-01-24 09:36:57
+ * @LastEditTime: 2025-01-24 10:23:39
  * @License: GPL 3.0
 -->
 <h1 align = "center">T-Circle-S3</h1>
@@ -131,6 +131,7 @@ T-Circle-S3 is a development board with a 0.75-inch onboard small screen develop
 | [GFX_Wifi_AP_Contract](./firmware/[T-Circle-S3_V1.0][GFX_Wifi_AP_Contract]_firmware_V1.0.0) | Original version |  |
 | [GFX_Wifi_STA_Contract](./firmware/[T-Circle-S3_V1.0][GFX_Wifi_STA_Contract]_firmware_V1.0.0) | Original version |  |
 | [lilygo_s3_apps](./firmware/[T-Circle-S3_V1.0]_[lilygo_s3_apps]_firmware_V1.0.0.bin) | Original version |  |
+| [xiaozhi_esp32](./firmware/[T-Circle-S3_V1.0][xiaozhi-esp32_V1.0.1]_firmware_202501240943.bin) | |  |
 
 ### PlatformIO
 1. Install[VisualStudioCode](https://code.visualstudio.com/Download),Choose installation based on your system type.
