@@ -4,7 +4,7 @@
  * @Author: LILYGO_L
  * @Date: 2023-09-11 16:13:14
  * @LastEditors: Please set LastEditors
- * @LastEditTime: 2025-01-24 10:22:42
+ * @LastEditTime: 2025-02-05 11:51:44
  * @License: GPL 3.0
 -->
 <h1 align = "center">T-Circle-S3</h1>
@@ -248,7 +248,7 @@ T-Circle-S3是一款基于ESP32S3开发的板载0.75寸小屏的开发板，配�
 * A. 请按住“BOOT-0”按键重新下载程序。
 
 ## 项目
-* [T-Circle-S3_V1.0](./project/T-Circle-S3_V1.0_V1.0.pdf)
+* [T-Circle-S3_V1.0](./project/T-Circle-S3_V1.0.pdf)
 
 ## 资料
 * [GC9D01N](./information/GC9D01N.pdf)

@@ -4,7 +4,7 @@
  * @Author: LILYGO_L
  * @Date: 2023-09-11 16:13:14
  * @LastEditors: Please set LastEditors
- * @LastEditTime: 2025-01-24 10:23:39
+ * @LastEditTime: 2025-02-05 11:51:26
  * @License: GPL 3.0
 -->
 <h1 align = "center">T-Circle-S3</h1>
@@ -247,7 +247,7 @@ T-Circle-S3 is a development board with a 0.75-inch onboard small screen develop
 * A. Please hold down the "BOOT-0" button and try downloading the program again.
 
 ## Project
-* [T-Circle-S3_V1.0](./project/T-Circle-S3_V1.0_V1.0.pdf)
+* [T-Circle-S3_V1.0](./project/T-Circle-S3_V1.0.pdf)
 
 ## Information
 * [GC9D01N](./information/GC9D01N.pdf)
