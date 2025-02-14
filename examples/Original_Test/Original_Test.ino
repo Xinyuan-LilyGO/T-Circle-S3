@@ -1,9 +1,9 @@
 /*
- * @Description: 
+ * @Description:
             Factory testing program
  * @Author: LILYGO_L
  * @Date: 2023-09-06 10:58:19
- * @LastEditTime: 2024-08-15 13:00:30
+ * @LastEditTime: 2025-02-14 14:24:06
  * @License: GPL 3.0
  */
 
@@ -17,6 +17,18 @@
 #include "Material_16Bit_160x160px.h"
 #include "FastLED.h"
 #include "Audio.h"
+
+#define SOFTWARE_NAME "Original_Test"
+
+#define SOFTWARE_LASTEDITTIME "202412261832"
+
+#ifdef T_Circle_S3_V1_0
+#define BOARD_VERSION "V1.0"
+#elif defined T_Circle_S3_V1_1
+#define BOARD_VERSION "V1.1"
+#else
+#error "Unknown macro definition. Please select the correct macro definition."
+#endif
 
 // 44.1 KHz
 #define IIS_SAMPLE_RATE 44100 // 采样速率
@@ -51,7 +63,7 @@ static bool Music_Start_Playing_Flag = false;
 uint8_t OTG_Mode = 0;
 char IIS_Read_Buff[100];
 
-Audio audio;
+Audio audio(false, 3, I2S_NUM_1);
 
 CRGB leds[NUM_LEDS];
 
@@ -63,10 +75,17 @@ Arduino_GFX *gfx = new Arduino_GC9D01N(
     LCD_WIDTH /* width */, LCD_HEIGHT /* height */,
     0 /* col offset 1 */, 0 /* row offset 1 */, 0 /* col_offset2 */, 0 /* row_offset2 */);
 
+#ifdef T_Circle_S3_V1_0
 std::shared_ptr<Arduino_IIS_DriveBus> IIS_Bus_0 =
-    std::make_shared<Arduino_HWIIS>(I2S_NUM_1, MSM261_BCLK, MSM261_WS, MSM261_DATA);
+    std::make_shared<Arduino_HWIIS>(I2S_NUM_0, MSM261_BCLK, MSM261_WS, MSM261_DATA);
+#elif defined T_Circle_S3_V1_1
+std::shared_ptr<Arduino_IIS_DriveBus> IIS_Bus_0 =
+    std::make_shared<Arduino_HWIIS>(I2S_NUM_0, -1, MP34DT05TR_LRCLK, MP34DT05TR_DATA);
+#else
+#error "Unknown macro definition. Please select the correct macro definition."
+#endif
 
-std::unique_ptr<Arduino_IIS> MSM261(new Arduino_MEMS(IIS_Bus_0));
+std::unique_ptr<Arduino_IIS> Microphone(new Arduino_MEMS(IIS_Bus_0));
 
 // std::shared_ptr<Arduino_IIS_DriveBus> IIS_Bus_1 =
 //     std::make_shared<Arduino_HWIIS>(I2S_NUM_1, MAX98357A_BCLK, MAX98357A_LRCLK,
@@ -784,7 +803,7 @@ void Original_Test_Loop()
     {
         bool temp = false;
 
-        if (MSM261->IIS_Read_Data(IIS_Read_Buff, 100) == true)
+        if (Microphone->IIS_Read_Data(IIS_Read_Buff, 100) == true)
         {
             // if (MAX98357A->IIS_Write_Data(IIS_Read_Buff, 10) == true)
             // {
@@ -934,6 +953,8 @@ void setup()
 {
     Serial.begin(115200);
     Serial.println("Ciallo");
+    Serial.println("[T-Circle-S3_" + (String)BOARD_VERSION "][" + (String)SOFTWARE_NAME +
+                   "]_firmware_" + (String)SOFTWARE_LASTEDITTIME);
 
     pinMode(MAX98357A_SD_MODE, OUTPUT);
     digitalWrite(MAX98357A_SD_MODE, HIGH);
@@ -959,16 +980,32 @@ void setup()
     CST816D->IIC_Write_Device_State(CST816D->Arduino_IIC_Touch::Device::TOUCH_DEVICE_INTERRUPT_MODE,
                                     CST816D->Arduino_IIC_Touch::Device_Mode::TOUCH_DEVICE_INTERRUPT_PERIODIC);
 
-    if (MSM261->begin(Arduino_IIS_DriveBus::Device_Data_Mode::DATA_IN,
-                      IIS_SAMPLE_RATE, IIS_DATA_BIT) == false)
+#ifdef T_Circle_S3_V1_0
+    if (Microphone->begin(i2s_mode_t::I2S_MODE_MASTER, ad_iis_data_mode_t::AD_IIS_DATA_IN, i2s_channel_fmt_t::I2S_CHANNEL_FMT_RIGHT_LEFT,
+                          IIS_DATA_BIT, IIS_SAMPLE_RATE) == false)
     {
-        Serial.println("MSM261 initialization fail");
+        Serial.println("Microphone initialization fail");
         delay(2000);
     }
     else
     {
-        Serial.println("MSM261 initialization successfully");
+        Serial.println("Microphone initialization successfully");
     }
+
+#elif defined T_Circle_S3_V1_1
+    if (Microphone->begin(i2s_mode_t::I2S_MODE_PDM, ad_iis_data_mode_t::AD_IIS_DATA_IN, i2s_channel_fmt_t::I2S_CHANNEL_FMT_RIGHT_LEFT,
+                          IIS_DATA_BIT, IIS_SAMPLE_RATE) == false)
+    {
+        Serial.println("Microphone initialization fail");
+        delay(2000);
+    }
+    else
+    {
+        Serial.println("Microphone initialization successfully");
+    }
+#else
+#error "Unknown macro definition. Please select the correct macro definition."
+#endif
 
     // if (MAX98357A->begin(Arduino_IIS_DriveBus::Device_Data_Mode::DATA_OUT,
     //                      IIS_SAMPLE_RATE, IIS_DATA_BIT) == false)

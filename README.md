@@ -4,7 +4,7 @@
  * @Author: LILYGO_L
  * @Date: 2023-09-11 16:13:14
  * @LastEditors: Please set LastEditors
- * @LastEditTime: 2025-02-05 11:51:26
+ * @LastEditTime: 2025-02-14 14:51:33
  * @License: GPL 3.0
 -->
 <h1 align = "center">T-Circle-S3</h1>
@@ -16,27 +16,26 @@
 ## **English | [中文](./README_CN.md)**
 
 ## Version iteration:
-| Version                              | Update date                       |
-| :-------------------------------: | :-------------------------------: |
-| T-Circle-S3_V1.0                      | 2024-08-15                         |
+| Version                               | Update date                       |Update description|
+| :-------------------------------: | :-------------------------------: |:--------------: |
+| T-Circle-S3_V1.0                      | 2024-08-15                    |   Original version      |
+| T-Circle-S3_V1.1                      | 2025-02-14                    |    Replace microphone model   |
 
 ## PurchaseLink
 
 | Product                     | SOC           |  FLASH  |  PSRAM   | Link                   |
 | :------------------------: | :-----------: |:-------: | :---------: | :------------------: |
-| T-Circle-S3_V1.0   | ESP32S3R8 |   16M   | 8M (Octal SPI) |  [LILYGO Mall](https://lilygo.cc/products/t-circle-s3?_pos=1&_sid=6fa6d0d3e&_ss=r)  |
+| T-Circle-S3_V1.0-V1.1   | ESP32S3R8 |   16M   | 8M (Octal SPI) |  [LILYGO Mall](https://lilygo.cc/products/t-circle-s3?_pos=1&_sid=6fa6d0d3e&_ss=r)  |
 
 ## Directory
 - [Describe](#describe)
 - [Preview](#preview)
 - [Module](#module)
-- [QuickStart](#quickstart)
+- [SoftwareDeployment](#SoftwareDeployment)
 - [PinOverview](#pinoverview)
 - [RelatedTests](#RelatedTests)
 - [FAQ](#faq)
 - [Project](#project)
-- [Information](#information)
-- [DependentLibraries](#dependentlibraries)
 
 ## Describe
 
@@ -69,7 +68,8 @@ T-Circle-S3 is a development board with a 0.75-inch onboard small screen develop
 * Chip: ESP32-S3-R8
 * PSRAM: 8M (Octal SPI) 
 * FLASH: 16M
-* For more details, please visit [Espressif ESP32-S3 Datasheet](https://www.espressif.com.cn/sites/default/files/documentation/esp32-s3_datasheet_en.pdf)
+* Related documentation:
+    >[Espressif ESP32-S3 Datasheet](https://www.espressif.com.cn/sites/default/files/documentation/esp32-s3_datasheet_en.pdf)
 
 ### 2. Screen
 
@@ -77,27 +77,59 @@ T-Circle-S3 is a development board with a 0.75-inch onboard small screen develop
 * Resolution: 160x160px
 * Screen type: TFT , LCD
 * Driver chip: GC9D01N
-* Compatibility library: Arduino_GFX
 * Bus communication protocol: Standard SPI
+* Related documentation:
+    >[GC9D01N](./information/GC9D01N.pdf) <br />
+    >[TFT_eSPI-2.5.43](https://github.com/Bodmer/TFT_eSPI)
+* Dependent libraries: 
+    >[Arduino_GFX-1.3.7](https://github.com/moononournation/Arduino_GFX)
 
 ### 3. Touch
 
 * Chip: CST816D
 * Bus communication protocol: IIC
+* Related documentation:
+    >[GC9D01N](./information/GC9D01N.pdf)
+* Dependent libraries: 
+    >[Arduino_DriveBus-1.1.16](https://github.com/Xk-w/Arduino_DriveBus)
 
 ### 4. Speaker
 
 * Driver Chip: MAX98357A
 * Bus Communication Protocol: IIS
+* Related documentation:
+    >[MAX98357A](./information/MAX98357AETE+T.pdf)
+* Dependent libraries: 
+    >[Arduino_DriveBus-1.1.16](https://github.com/Xk-w/Arduino_DriveBus) <br />
+    >[ESP32-audioI2S-3.0.6](https://github.com/schreibfaul1/ESP32-audioI2S)
+    
 
 ### 5. Microphone
 
-* Driver Chip: MSM261S4030H0R
-* Bus Communication Protocol: IIS
+> #### T-Circle-S3_V1.0 version
+> * Chip: MSM261S4030H0R
+> * Bus communication protocol: IIS
+> * Related documentation: 
+>    >[MSM261S4030H0R](./information/MSM261S4030H0R.pdf))
+> * Dependent libraries: 
+>     >[Arduino_DriveBus-1.1.16](https://github.com/Xk-w/Arduino_DriveBus)
+
+> #### T-Circle-S3_V1.1 version
+> * Chip: MP34DT05-A
+> * Bus communication protocol: PDM
+> * Related documentation: 
+>    >[MP34DT05-A](./information/mp34dt05-a.pdf)
+> * Dependent libraries: 
+>    >[Arduino_DriveBus-1.1.16](https://github.com/Xk-w/Arduino_DriveBus)
+
 
 ### 6. LED
 
 * Chip: APA102
+* Related documentation: 
+    >[APA102_2020_LED](./information/APA102_2020_LED.pdf)
+* Dependent libraries: 
+    >[FastLED-3.6.0](https://github.com/FastLED/FastLED)
 
 ## QuickStart
 
@@ -127,7 +159,8 @@ T-Circle-S3 is a development board with a 0.75-inch onboard small screen develop
 
 | Firmware | Description | Picture |
 | ------  | ------  | ------ |
-| [Original_Test](./firmware/[T-Circle-S3_V1.0][Original_Test]_firmware_V1.0.1.bin)s Original version |  |
+| [Original_Test(T-Circle-S3_V1.0)](./firmware/[T-Circle-S3_V1.0][Original_Test]_firmware_V1.0.1.bin) | Original factory test files |  |
+| [Original_Test(T-Circle-S3_V1.1)](./firmware/（V1.1版本修改麦克风型号）[T-Circle-S3_V1.1][Original_Test]_firmware_202502141426.bin) | Original factory test files |  |
 | [GFX_Wifi_AP_Contract](./firmware/[T-Circle-S3_V1.0][GFX_Wifi_AP_Contract]_firmware_V1.0.0) | Original version |  |
 | [GFX_Wifi_STA_Contract](./firmware/[T-Circle-S3_V1.0][GFX_Wifi_STA_Contract]_firmware_V1.0.0) | Original version |  |
 | [lilygo_s3_apps](./firmware/[T-Circle-S3_V1.0]_[lilygo_s3_apps]_firmware_V1.0.0.bin) | Original version |  |
@@ -206,11 +239,18 @@ T-Circle-S3 is a development board with a 0.75-inch onboard small screen develop
 | SDA         | IO11       |
 | SCL         | IO14       |
 
-| Microphone pin  | ESP32S3 pins|
-| :------------------: | :------------------:|
-| BCLK         | IO7       |
-| WS         | IO9       |
-| DATA         | IO8       |
+> #### T-Circle-S3_V1.0 version
+> | Microphone pins  | ESP32S3 pins|
+> | :------------------: | :------------------:|
+> | BCLK         | IO7       |
+> | WS         | IO9       |
+> | DATA         | IO8       |
+
+> #### T-Circle-S3_V1.1 version
+> | Microphone pins  | ESP32S3 pins|
+> | :------------------: | :------------------:|
+> | LRCLK         | IO9       |
+> | DATA         | IO8       |
 
 | Speaker pins  | ESP32S3 pins|
 | :------------------: | :------------------:|
@@ -248,18 +288,4 @@ T-Circle-S3 is a development board with a 0.75-inch onboard small screen develop
 
 ## Project
 * [T-Circle-S3_V1.0](./project/T-Circle-S3_V1.0.pdf)
-
-## Information
-* [GC9D01N](./information/GC9D01N.pdf)
-* [APA102_2020_LED](./information/APA102_2020_LED.pdf)
-* [MSM261S4030H0R](./information/MSM261S4030H0R.pdf)
-* [MAX98357AETE+T](./information/MAX98357AETE+T.pdf)
-
-## DependentLibraries
-* [Arduino_GFX-1.3.7](https://github.com/moononournation/Arduino_GFX)
-* [Arduino_DriveBus-1.1.12](https://github.com/Xk-w/Arduino_DriveBus)
-* [ESP32-audioI2S-3.0.6](https://github.com/schreibfaul1/ESP32-audioI2S)
-* [FastLED-3.6.0](https://github.com/FastLED/FastLED)
-* [TFT_eSPI-2.5.43](https://github.com/Bodmer/TFT_eSPI)
-* [DFRobot_MSM261](https://github.com/DFRobot/DFrobot_MSM261)
 

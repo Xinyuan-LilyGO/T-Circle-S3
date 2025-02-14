@@ -2,7 +2,7 @@
  * @Description: None
  * @Author: None
  * @Date: 2023-08-16 14:24:03
- * @LastEditTime: 2025-01-20 10:12:01
+ * @LastEditTime: 2025-02-14 14:04:29
  * @License: GPL 3.0
  */
 #pragma once
@@ -13,10 +13,21 @@
 #define MAX98357A_DATA 6
 #define MAX98357A_SD_MODE 45
 
+// #define T_Circle_S3_V1_0
+#define T_Circle_S3_V1_1
+
+#ifdef T_Circle_S3_V1_0
 // MSM261
 #define MSM261_BCLK 7
 #define MSM261_WS 9
 #define MSM261_DATA 8
+#endif
+
+#ifdef T_Circle_S3_V1_1
+// MP34DT05TR
+#define MP34DT05TR_LRCLK 9
+#define MP34DT05TR_DATA 8
+#endif
 
 // APA102
 #define APA102_DATA 38
@@ -41,7 +52,3 @@
 #define TP_SCL 14
 #define TP_RST -1
 #define TP_INT 12
-
-//Rotary Encoder
-#define KNOB_DATA_A 47
-#define KNOB_DATA_B 48

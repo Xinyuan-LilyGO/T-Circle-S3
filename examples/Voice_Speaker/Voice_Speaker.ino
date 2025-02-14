@@ -1,10 +1,10 @@
 /*
- * @Description: 
+ * @Description:
             Example of microphone speaker
         Re output the microphone input data from the speaker
  * @Author: LILYGO_L
  * @Date: 2023-12-21 11:30:50
- * @LastEditTime: 2024-08-15 13:30:56
+ * @LastEditTime: 2025-02-14 14:11:55
  * @License: GPL 3.0
  */
 #include "Arduino_DriveBus_Library.h"
@@ -16,10 +16,17 @@
 
 char IIS_Read_Buff[100];
 
+#ifdef T_Circle_S3_V1_0
 std::shared_ptr<Arduino_IIS_DriveBus> IIS_Bus_0 =
     std::make_shared<Arduino_HWIIS>(I2S_NUM_0, MSM261_BCLK, MSM261_WS, MSM261_DATA);
+#elif defined T_Circle_S3_V1_1
+std::shared_ptr<Arduino_IIS_DriveBus> IIS_Bus_0 =
+    std::make_shared<Arduino_HWIIS>(I2S_NUM_0, -1, MP34DT05TR_LRCLK, MP34DT05TR_DATA);
+#else
+#error "Unknown macro definition. Please select the correct macro definition."
+#endif
 
-std::unique_ptr<Arduino_IIS> MSM261(new Arduino_MEMS(IIS_Bus_0));
+std::unique_ptr<Arduino_IIS> Microphone(new Arduino_MEMS(IIS_Bus_0));
 
 std::shared_ptr<Arduino_IIS_DriveBus> IIS_Bus_1 =
     std::make_shared<Arduino_HWIIS>(I2S_NUM_1, MAX98357A_BCLK, MAX98357A_LRCLK,
@@ -33,16 +40,28 @@ void setup()
     pinMode(MAX98357A_SD_MODE, OUTPUT);
     digitalWrite(MAX98357A_SD_MODE, HIGH);
 
-    while (MSM261->begin(Arduino_IIS_DriveBus::Device_Data_Mode::DATA_IN,
-                         IIS_SAMPLE_RATE, IIS_DATA_BIT) == false)
+#ifdef T_Circle_S3_V1_0
+    while (Microphone->begin(i2s_mode_t::I2S_MODE_MASTER, ad_iis_data_mode_t::AD_IIS_DATA_IN, i2s_channel_fmt_t::I2S_CHANNEL_FMT_RIGHT_LEFT,
+                             IIS_DATA_BIT, IIS_SAMPLE_RATE) == false)
     {
-        Serial.println("MSM261 initialization fail");
+        Serial.println("Microphone initialization fail");
         delay(2000);
     }
-    Serial.println("MSM261 initialization successfully");
+#elif defined T_Circle_S3_V1_1
+    while (Microphone->begin(i2s_mode_t::I2S_MODE_PDM, ad_iis_data_mode_t::AD_IIS_DATA_IN, i2s_channel_fmt_t::I2S_CHANNEL_FMT_RIGHT_LEFT,
+                             IIS_DATA_BIT, IIS_SAMPLE_RATE) == false)
+    {
+        Serial.println("Microphone initialization fail");
+        delay(2000);
+    }
+#else
+#error "Unknown macro definition. Please select the correct macro definition."
+#endif
 
-    while (MAX98357A->begin(Arduino_IIS_DriveBus::Device_Data_Mode::DATA_OUT,
-                            IIS_SAMPLE_RATE, IIS_DATA_BIT) == false)
+    Serial.println("Microphone initialization successfully");
+
+    while (MAX98357A->begin(i2s_mode_t::I2S_MODE_MASTER, ad_iis_data_mode_t::AD_IIS_DATA_OUT, i2s_channel_fmt_t::I2S_CHANNEL_FMT_RIGHT_LEFT,
+                            IIS_DATA_BIT, IIS_SAMPLE_RATE) == false)
     {
         Serial.println("MAX98357A initialization fail");
         delay(2000);
@@ -55,7 +74,7 @@ void setup()
 
 void loop()
 {
-    if (MSM261->IIS_Read_Data(IIS_Read_Buff, 10) == true)
+    if (Microphone->IIS_Read_Data(IIS_Read_Buff, 10) == true)
     {
         // 输出左声道数据
         // Serial.printf("Left: %d\n", (int16_t)((int16_t)IIS_Read_Buff[0] | (int16_t)IIS_Read_Buff[1] << 8));

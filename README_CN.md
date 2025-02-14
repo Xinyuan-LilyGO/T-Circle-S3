@@ -4,7 +4,7 @@
  * @Author: LILYGO_L
  * @Date: 2023-09-11 16:13:14
  * @LastEditors: Please set LastEditors
- * @LastEditTime: 2025-02-05 11:51:44
+ * @LastEditTime: 2025-02-14 14:50:05
  * @License: GPL 3.0
 -->
 <h1 align = "center">T-Circle-S3</h1>
@@ -16,27 +16,26 @@
 ## **[English](./README.md) | 中文**
 
 ## 版本迭代:
-| Version                               | Update date                       |
-| :-------------------------------: | :-------------------------------: |
-| T-Circle-S3_V1.0                      | 2024-08-15                    |
+| Version                               | Update date                       |Update description|
+| :-------------------------------: | :-------------------------------: |:--------------: |
+| T-Circle-S3_V1.0                      | 2024-08-15                    | 初始版本      |
+| T-Circle-S3_V1.1                      | 2025-02-14                    |更换麦克风型号    |
 
 ## 购买链接
 
 | Product                     | SOC           |  FLASH  |  PSRAM   | Link                   |
 | :------------------------: | :-----------: |:-------: | :---------: | :------------------: |
-| T-Circle-S3_V1.0   | ESP32S3R8 |   16M   | 8M (Octal SPI) |  [LILYGO Mall](https://lilygo.cc/products/t-circle-s3?_pos=1&_sid=6fa6d0d3e&_ss=r)   |
+| T-Circle-S3_V1.0-V1.1   | ESP32S3R8 |   16M   | 8M (Octal SPI) |  [LILYGO Mall](https://lilygo.cc/products/t-circle-s3?_pos=1&_sid=6fa6d0d3e&_ss=r)   |
 
 ## 目录
 - [描述](#描述)
 - [预览](#预览)
 - [模块](#模块)
-- [快速开始](#快速开始)
+- [软件部署](#软件部署)
 - [引脚总览](#引脚总览)
 - [相关测试](#相关测试)
 - [常见问题](#常见问题)
 - [项目](#项目)
-- [资料](#资料)
-- [依赖库](#依赖库)
 
 ## 描述
 
@@ -69,7 +68,8 @@ T-Circle-S3是一款基于ESP32S3开发的板载0.75寸小屏的开发板，配�
 * 芯片：ESP32-S3-R8
 * PSRAM：8M (Octal SPI) 
 * FLASH：16M
-* 其他说明：更多资料请访问[乐鑫官方ESP32-S3数据手册](https://www.espressif.com.cn/sites/default/files/documentation/esp32-s3_datasheet_en.pdf)
+* 相关资料：
+    >[乐鑫官方ESP32-S3数据手册](https://www.espressif.com.cn/sites/default/files/documentation/esp32-s3_datasheet_en.pdf)
 
 ### 2. 屏幕
 
@@ -77,27 +77,58 @@ T-Circle-S3是一款基于ESP32S3开发的板载0.75寸小屏的开发板，配�
 * 分辨率：160x160px
 * 屏幕类型：TFT、LCD
 * 驱动芯片：GC9D01N
-* 兼容库：Arduino_GFX
 * 总线通信协议：标准SPI
+* 相关资料：
+    >[GC9D01N](./information/GC9D01N.pdf) <br />
+    >[TFT_eSPI-2.5.43](https://github.com/Bodmer/TFT_eSPI)
+* 依赖库：
+    >[Arduino_GFX-1.3.7](https://github.com/moononournation/Arduino_GFX)
 
 ### 3. 触摸
 
 * 芯片：CST816D
 * 总线通信协议：IIC
+* 相关资料：
+    >[GC9D01N](./information/GC9D01N.pdf)
+* 依赖库：
+    >[Arduino_DriveBus-1.1.16](https://github.com/Xk-w/Arduino_DriveBus)
 
 ### 4. 扬声器
 
 * 驱动芯片：MAX98357A
 * 使用总线通信协议：IIS
+* 相关资料：
+    >[MAX98357A](./information/MAX98357AETE+T.pdf)
+* 依赖库：
+    >[Arduino_DriveBus-1.1.16](https://github.com/Xk-w/Arduino_DriveBus) <br />
+    >[ESP32-audioI2S-3.0.6](https://github.com/schreibfaul1/ESP32-audioI2S)
 
 ### 5. 麦克风
 
-* 驱动芯片：MSM261S4030H0R
-* 使用总线通信协议：IIS
+> #### T-Circle-S3_V1.0 版本
+> * 芯片：MSM261S4030H0R
+> * 总线通信协议：IIS
+> * 相关资料：
+>    >[MSM261S4030H0R](./information/MSM261S4030H0R.pdf)
+> * 依赖库：
+>     >[Arduino_DriveBus-1.1.16](https://github.com/Xk-w/Arduino_DriveBus)
+>     >[DFRobot_MSM261](https://github.com/DFRobot/DFrobot_MSM261)
+
+> #### T-Circle-S3_V1.1 版本
+> * 芯片：MP34DT05-A
+> * 总线通信协议：PDM
+> * 相关资料：
+>    >[MP34DT05-A](./information/mp34dt05-a.pdf)
+> * 依赖库：
+>    >[Arduino_DriveBus-1.1.16](https://github.com/Xk-w/Arduino_DriveBus)
 
 ### 6. LED灯
 
 * 芯片：APA102
+* 相关资料：
+    >[APA102_2020_LED](./information/APA102_2020_LED.pdf)
+* 依赖库：
+    >[FastLED-3.6.0](https://github.com/FastLED/FastLED)
 
 ## 快速开始
 
@@ -127,7 +158,8 @@ T-Circle-S3是一款基于ESP32S3开发的板载0.75寸小屏的开发板，配�
 
 | Firmware | Description | Picture |
 | ------  | ------  | ------ |
-| [Original_Test](./firmware/[T-Circle-S3_V1.0][Original_Test]_firmware_V1.0.1.bin) | 初始版本 |  |
+| [Original_Test(T-Circle-S3_V1.0)](./firmware/[T-Circle-S3_V1.0][Original_Test]_firmware_V1.0.1.bin) | 出厂程序 |  |
+| [Original_Test(T-Circle-S3_V1.1)](./firmware/（V1.1版本修改麦克风型号）[T-Circle-S3_V1.1][Original_Test]_firmware_202502141426.bin) | 出厂程序 |  |
 | [GFX_Wifi_AP_Contract](./firmware/[T-Circle-S3_V1.0] [GFX_Wifi_AP_Contract]_firmware_V1.0.0) | 初始版本 |  |
 | [GFX_Wifi_STA_Contract](./firmware/[T-Circle-S3_V1.0][GFX_Wifi_STA_Contract]_firmware_V1.0.0) | 初始版本 |  |
 | [lilygo_s3_apps](./firmware/[T-Circle-S3_V1.0]_[lilygo_s3_apps]_firmware_V1.0.0.bin) | 初始版本 |  |
@@ -212,6 +244,19 @@ T-Circle-S3是一款基于ESP32S3开发的板载0.75寸小屏的开发板，配�
 | WS         | IO9       |
 | DATA         | IO8       |
 
+> #### T-Circle-S3_V1.0 版本
+> | 麦克风引脚  | ESP32S3引脚|
+> | :------------------: | :------------------:|
+> | BCLK         | IO7       |
+> | WS         | IO9       |
+> | DATA         | IO8       |
+
+> #### T-Circle-S3_V1.1 版本
+> | 麦克风引脚  | ESP32S3引脚|
+> | :------------------: | :------------------:|
+> | LRCLK         | IO9       |
+> | DATA         | IO8       |
+
 | 扬声器引脚  | ESP32S3引脚|
 | :------------------: | :------------------:|
 | BCLK         | IO5       |
@@ -249,17 +294,3 @@ T-Circle-S3是一款基于ESP32S3开发的板载0.75寸小屏的开发板，配�
 
 ## 项目
 * [T-Circle-S3_V1.0](./project/T-Circle-S3_V1.0.pdf)
-
-## 资料
-* [GC9D01N](./information/GC9D01N.pdf)
-* [APA102_2020_LED](./information/APA102_2020_LED.pdf)
-* [MSM261S4030H0R](./information/MSM261S4030H0R.pdf)
-* [MAX98357AETE+T](./information/MAX98357AETE+T.pdf)
-
-## 依赖库
-* [Arduino_GFX-1.3.7](https://github.com/moononournation/Arduino_GFX)
-* [Arduino_DriveBus-1.1.12](https://github.com/Xk-w/Arduino_DriveBus)
-* [ESP32-audioI2S-3.0.6](https://github.com/schreibfaul1/ESP32-audioI2S)
-* [FastLED-3.6.0](https://github.com/FastLED/FastLED)
-* [TFT_eSPI-2.5.43](https://github.com/Bodmer/TFT_eSPI)
-* [DFRobot_MSM261](https://github.com/DFRobot/DFrobot_MSM261)
