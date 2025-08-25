@@ -91,7 +91,7 @@ T-Circle-S3 is a development board with a 0.75-inch onboard small screen develop
 * Related documentation:
     >[GC9D01N](./information/GC9D01N.pdf)
 * Dependent libraries: 
-    >[Arduino_DriveBus-1.1.16](https://github.com/Xk-w/Arduino_DriveBus)
+    >[Arduino_DriveBus-1.1.16]()
 
 ### 4. Speaker
 
@@ -100,7 +100,7 @@ T-Circle-S3 is a development board with a 0.75-inch onboard small screen develop
 * Related documentation:
     >[MAX98357A](./information/MAX98357AETE+T.pdf)
 * Dependent libraries: 
-    >[Arduino_DriveBus-1.1.16](https://github.com/Xk-w/Arduino_DriveBus) <br />
+    >[Arduino_DriveBus-1.1.16]() <br />
     >[ESP32-audioI2S-3.0.6](https://github.com/schreibfaul1/ESP32-audioI2S)
     
 
@@ -112,7 +112,7 @@ T-Circle-S3 is a development board with a 0.75-inch onboard small screen develop
 > * Related documentation: 
 >    >[MSM261S4030H0R](./information/MSM261S4030H0R.pdf))
 > * Dependent libraries: 
->     >[Arduino_DriveBus-1.1.16](https://github.com/Xk-w/Arduino_DriveBus)
+>     >[Arduino_DriveBus-1.1.16]()
 
 > #### T-Circle-S3_V1.1 version
 > * Chip: MP34DT05-A
@@ -120,7 +120,7 @@ T-Circle-S3 is a development board with a 0.75-inch onboard small screen develop
 > * Related documentation: 
 >    >[MP34DT05-A](./information/mp34dt05-a.pdf)
 > * Dependent libraries: 
->    >[Arduino_DriveBus-1.1.16](https://github.com/Xk-w/Arduino_DriveBus)
+>    >[Arduino_DriveBus-1.1.16]()
 
 
 ### 6. LED

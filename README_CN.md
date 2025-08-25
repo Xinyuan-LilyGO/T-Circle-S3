@@ -91,7 +91,7 @@ T-Circle-S3是一款基于ESP32S3开发的板载0.75寸小屏的开发板，配�
 * 相关资料：
     >[GC9D01N](./information/GC9D01N.pdf)
 * 依赖库：
-    >[Arduino_DriveBus-1.1.16](https://github.com/Xk-w/Arduino_DriveBus)
+    >[Arduino_DriveBus-1.1.16]()
 
 ### 4. 扬声器
 
@@ -100,7 +100,7 @@ T-Circle-S3是一款基于ESP32S3开发的板载0.75寸小屏的开发板，配�
 * 相关资料：
     >[MAX98357A](./information/MAX98357AETE+T.pdf)
 * 依赖库：
-    >[Arduino_DriveBus-1.1.16](https://github.com/Xk-w/Arduino_DriveBus) <br />
+    >[Arduino_DriveBus-1.1.16]() <br />
     >[ESP32-audioI2S-3.0.6](https://github.com/schreibfaul1/ESP32-audioI2S)
 
 ### 5. 麦克风
@@ -111,7 +111,7 @@ T-Circle-S3是一款基于ESP32S3开发的板载0.75寸小屏的开发板，配�
 > * 相关资料：
 >    >[MSM261S4030H0R](./information/MSM261S4030H0R.pdf)
 > * 依赖库：
->     >[Arduino_DriveBus-1.1.16](https://github.com/Xk-w/Arduino_DriveBus)
+>     >[Arduino_DriveBus-1.1.16]()
 >     >[DFRobot_MSM261](https://github.com/DFRobot/DFrobot_MSM261)
 
 > #### T-Circle-S3_V1.1 版本
@@ -120,7 +120,7 @@ T-Circle-S3是一款基于ESP32S3开发的板载0.75寸小屏的开发板，配�
 > * 相关资料：
 >    >[MP34DT05-A](./information/mp34dt05-a.pdf)
 > * 依赖库：
->    >[Arduino_DriveBus-1.1.16](https://github.com/Xk-w/Arduino_DriveBus)
+>    >[Arduino_DriveBus-1.1.16]()
 
 ### 6. LED灯
 
