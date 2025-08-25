@@ -3,7 +3,7 @@
             Factory testing program
  * @Author: LILYGO_L
  * @Date: 2023-09-06 10:58:19
- * @LastEditTime: 2025-02-14 14:24:06
+ * @LastEditTime: 2025-06-09 13:50:18
  * @License: GPL 3.0
  */
 
@@ -17,10 +17,15 @@
 #include "Material_16Bit_160x160px.h"
 #include "FastLED.h"
 #include "Audio.h"
+#include "ICM20948_WE.h"
+#include "IRremoteESP8266.h"
+#include "IRrecv.h"
+#include "IRsend.h"
+#include "IRutils.h"
 
 #define SOFTWARE_NAME "Original_Test"
 
-#define SOFTWARE_LASTEDITTIME "202412261832"
+#define SOFTWARE_LASTEDITTIME "202506091350"
 
 #ifdef T_Circle_S3_V1_0
 #define BOARD_VERSION "V1.0"
@@ -63,9 +68,18 @@ static bool Music_Start_Playing_Flag = false;
 uint8_t OTG_Mode = 0;
 char IIS_Read_Buff[100];
 
+bool Skip_Current_Test = false;
+
+bool Led_Color_Switch_Flag = false;
+
 Audio audio(false, 3, I2S_NUM_1);
 
 CRGB leds[NUM_LEDS];
+
+IRsend irsend(RMT_TX);
+IRrecv irrecv(RMT_RX);
+
+decode_results results;
 
 Arduino_DataBus *bus = new Arduino_ESP32SPIDMA(
     LCD_DC /* DC */, LCD_CS /* CS */, LCD_SCLK /* SCK */, LCD_MOSI /* MOSI */, -1 /* MISO */);
@@ -94,16 +108,43 @@ std::unique_ptr<Arduino_IIS> Microphone(new Arduino_MEMS(IIS_Bus_0));
 // std::unique_ptr<Arduino_IIS> MAX98357A(new Arduino_Amplifier(IIS_Bus_1, MAX98357A_SD_MODE));
 
 std::shared_ptr<Arduino_IIC_DriveBus> IIC_Bus =
-    std::make_shared<Arduino_HWIIC>(IIC_SDA, IIC_SCL, &Wire);
+    std::make_shared<Arduino_HWIIC>(IIC_SDA, IIC_SCL, &Wire1);
 
 void Arduino_IIC_Touch_Interrupt(void);
 
 std::unique_ptr<Arduino_IIC> CST816D(new Arduino_CST816x(IIC_Bus, CST816D_DEVICE_ADDRESS,
                                                          TP_RST, TP_INT, Arduino_IIC_Touch_Interrupt));
 
+/* There are several ways to create your ICM20948 object:
+ * ICM20948_WE myIMU = ICM20948_WE()              -> uses Wire / I2C Address = 0x68
+ * ICM20948_WE myIMU = ICM20948_WE(ICM20948_ADDR) -> uses Wire / ICM20948_ADDR
+ * ICM20948_WE myIMU = ICM20948_WE(&wire2)        -> uses the TwoWire object wire2 / ICM20948_ADDR
+ * ICM20948_WE myIMU = ICM20948_WE(&wire2, ICM20948_ADDR) -> all together
+ * ICM20948_WE myIMU = ICM20948_WE(CS_PIN, spi);  -> uses SPI, spi is just a flag, see SPI example
+ * ICM20948_WE myIMU = ICM20948_WE(&SPI, CS_PIN, spi);  -> uses SPI / passes the SPI object, spi is just a flag, see SPI example
+ */
+ICM20948_WE myIMU = ICM20948_WE(ICM20948_ADDRESS);
+
 void Arduino_IIC_Touch_Interrupt(void)
 {
     CST816D->IIC_Interrupt_Flag = true;
+}
+
+void Skip_Test_Loop()
+{
+    uint8_t fingers_number = CST816D->IIC_Read_Device_Value(CST816D->Arduino_IIC_Touch::Value_Information::TOUCH_FINGER_NUMBER);
+
+    if (fingers_number > 0)
+    {
+        int32_t touch_x = CST816D->IIC_Read_Device_Value(CST816D->Arduino_IIC_Touch::Value_Information::TOUCH_COORDINATE_X);
+        int32_t touch_y = CST816D->IIC_Read_Device_Value(CST816D->Arduino_IIC_Touch::Value_Information::TOUCH_COORDINATE_Y);
+
+        if (touch_x > 0 && touch_x < LCD_WIDTH &&
+            touch_y > 125 && touch_y < LCD_HEIGHT)
+        {
+            Skip_Current_Test = true;
+        }
+    }
 }
 
 void Wifi_STA_Test(void)
@@ -310,8 +351,32 @@ void GFX_Print_1()
     gfx->printf("Next Test");
 }
 
+void GFX_Print_2()
+{
+    gfx->fillRect(0, 125, LCD_WIDTH, LCD_HEIGHT, RED);
+    gfx->drawRect(0, 125, LCD_WIDTH, LCD_HEIGHT, CYAN);
+
+    gfx->setTextSize(1);
+    gfx->setTextColor(WHITE);
+    gfx->setCursor(55, 140);
+    gfx->printf("Skip Test");
+}
+
+void GFX_Print_3()
+{
+    gfx->fillRect(50, 55, 65, 40, PINK);
+    gfx->drawRect(50, 55, 65, 40, CYAN);
+
+    gfx->setTextSize(1);
+    gfx->setTextColor(WHITE);
+    gfx->setCursor(70, 70);
+    gfx->printf("Send");
+}
+
 void GFX_Print_TEST(String s)
 {
+    Skip_Current_Test = false;
+
     gfx->fillScreen(WHITE);
     gfx->setCursor(45, 30);
     gfx->setTextSize(3);
@@ -323,19 +388,39 @@ void GFX_Print_TEST(String s)
     gfx->setTextColor(BLACK);
     gfx->print(s);
 
+    GFX_Print_2();
+
     gfx->setCursor(70, 90);
     gfx->setTextSize(3);
     gfx->setTextColor(RED);
     gfx->printf("3");
-    delay(1000);
-    gfx->fillRect(70, 90, 100, 40, WHITE);
+    delay(300);
+    gfx->fillRect(70, 90, 100, 30, WHITE);
     gfx->setCursor(70, 90);
     gfx->printf("2");
-    delay(1000);
-    gfx->fillRect(70, 90, 100, 40, WHITE);
+    for (int i = 0; i < 100; i++)
+    {
+        Skip_Test_Loop();
+        delay(10);
+
+        if (Skip_Current_Test == true)
+        {
+            break;
+        }
+    }
+    gfx->fillRect(70, 90, 100, 30, WHITE);
     gfx->setCursor(70, 90);
     gfx->printf("1");
-    delay(1000);
+    for (int i = 0; i < 100; i++)
+    {
+        Skip_Test_Loop();
+        delay(10);
+
+        if (Skip_Current_Test == true)
+        {
+            break;
+        }
+    }
 }
 
 void GFX_Print_FINISH()
@@ -392,8 +477,6 @@ void GFX_Print_Play_Failed()
 
 void Original_Test_1()
 {
-    GFX_Print_TEST("1.Touch Test");
-
     gfx->fillScreen(WHITE);
 
     int32_t touch_x = CST816D->IIC_Read_Device_Value(CST816D->Arduino_IIC_Touch::Value_Information::TOUCH_COORDINATE_X);
@@ -407,8 +490,6 @@ void Original_Test_1()
 
 void Original_Test_2()
 {
-    GFX_Print_TEST("2.LCD Edge Detection Test");
-
     gfx->fillScreen(WHITE);
     gfx->drawRect(0, 0, LCD_WIDTH, LCD_HEIGHT, RED);
 
@@ -419,8 +500,6 @@ void Original_Test_2()
 
 void Original_Test_3()
 {
-    GFX_Print_TEST("3.LCD Backlight Test");
-
     gfx->fillScreen(WHITE);
 
     GFX_Print_START();
@@ -448,8 +527,6 @@ void Original_Test_3()
 
 void Original_Test_4()
 {
-    GFX_Print_TEST("4.LCD Color Test");
-
     gfx->fillScreen(RED);
     delay(3000);
     gfx->fillScreen(GREEN);
@@ -473,8 +550,6 @@ void Original_Test_4()
 
 void Original_Test_5()
 {
-    GFX_Print_TEST("5.LED Color Test");
-
     gfx->fillScreen(WHITE);
 
     GFX_Print_START();
@@ -508,8 +583,6 @@ void Original_Test_5()
 
 void Original_Test_6()
 {
-    GFX_Print_TEST("6.MSM261 Test");
-
     gfx->fillScreen(WHITE);
 
     gfx->fillRect(30, 30, 130, 30, WHITE);
@@ -517,7 +590,7 @@ void Original_Test_6()
     gfx->setTextColor(BLACK);
 
     gfx->setCursor(30, 30);
-    gfx->printf("MSM261 ON");
+    gfx->printf("Microphone ON");
 
     // gfx->setCursor(30, 40);
     // gfx->setTextColor(RED);
@@ -531,8 +604,6 @@ void Original_Test_6()
 
 void Original_Test_7()
 {
-    GFX_Print_TEST("7.WIFI STA Test");
-
     Wifi_STA_Test();
 
     delay(2000);
@@ -564,8 +635,6 @@ void Original_Test_7()
 
 void Original_Test_8()
 {
-    GFX_Print_TEST("8.Wifi Music Test");
-
     gfx->fillScreen(BLACK);
     gfx->setCursor(0, 70);
     gfx->setTextSize(1);
@@ -574,7 +643,7 @@ void Original_Test_8()
 
     while (1)
     {
-        if (audio.connecttohost("http://music.163.com/song/media/outer/url?id=26122999.mp3") == false)
+        if (audio.connecttohost("https://freetyst.nf.migu.cn/public/product9th/product45/2022/05/0716/2018%E5%B9%B409%E6%9C%8812%E6%97%A510%E7%82%B943%E5%88%86%E7%B4%A7%E6%80%A5%E5%86%85%E5%AE%B9%E5%87%86%E5%85%A5%E5%8D%8E%E7%BA%B3179%E9%A6%96/%E6%A0%87%E6%B8%85%E9%AB%98%E6%B8%85/MP3_128_16_Stero/6005751EPFG164228.mp3?channelid=02&msisdn=d43a7dcc-8498-461b-ba22-3205e9b6aa82&Tim=1728484238063&Key=0442fa065dacda7c") == false)
         {
             Music_Start_Playing_Flag = false;
         }
@@ -628,325 +697,796 @@ void Original_Test_8()
     GFX_Print_1();
 }
 
+void Original_Test_9()
+{
+    Serial.println("Position your ICM20948 flat and don't move it - calibrating...");
+    delay(1000);
+    myIMU.autoOffsets();
+    Serial.println("Done!");
+
+    /*  ICM20948_ACC_RANGE_2G      2 g   (default)
+     *  ICM20948_ACC_RANGE_4G      4 g
+     *  ICM20948_ACC_RANGE_8G      8 g
+     *  ICM20948_ACC_RANGE_16G    16 g
+     */
+    myIMU.setAccRange(ICM20948_ACC_RANGE_2G);
+
+    /*  Choose a level for the Digital Low Pass Filter or switch it off.
+     *  ICM20948_DLPF_0, ICM20948_DLPF_2, ...... ICM20948_DLPF_7, ICM20948_DLPF_OFF
+     *
+     *  IMPORTANT: This needs to be ICM20948_DLPF_7 if DLPF is used in cycle mode!
+     *
+     *  DLPF       3dB Bandwidth [Hz]      Output Rate [Hz]
+     *    0              246.0               1125/(1+ASRD)
+     *    1              246.0               1125/(1+ASRD)
+     *    2              111.4               1125/(1+ASRD)
+     *    3               50.4               1125/(1+ASRD)
+     *    4               23.9               1125/(1+ASRD)
+     *    5               11.5               1125/(1+ASRD)
+     *    6                5.7               1125/(1+ASRD)
+     *    7              473.0               1125/(1+ASRD)
+     *    OFF           1209.0               4500
+     *
+     *    ASRD = Accelerometer Sample Rate Divider (0...4095)
+     *    You achieve lowest noise using level 6
+     */
+    myIMU.setAccDLPF(ICM20948_DLPF_6);
+
+    /* You can set the following modes for the magnetometer:
+     * AK09916_PWR_DOWN          Power down to save energy
+     * AK09916_TRIGGER_MODE      Measurements on request, a measurement is triggered by
+     *                           calling setMagOpMode(AK09916_TRIGGER_MODE)
+     * AK09916_CONT_MODE_10HZ    Continuous measurements, 10 Hz rate
+     * AK09916_CONT_MODE_20HZ    Continuous measurements, 20 Hz rate
+     * AK09916_CONT_MODE_50HZ    Continuous measurements, 50 Hz rate
+     * AK09916_CONT_MODE_100HZ   Continuous measurements, 100 Hz rate (default)
+     */
+    myIMU.setMagOpMode(AK09916_CONT_MODE_20HZ);
+
+    gfx->fillScreen(WHITE);
+
+    gfx->fillRect(30, 30, 130, 30, WHITE);
+    gfx->setTextSize(1);
+    gfx->setTextColor(BLACK);
+
+    gfx->setCursor(50, 30);
+    gfx->printf("IMU Info");
+
+    GFX_Print_1();
+}
+
+void Original_Test_10()
+{
+    gfx->fillScreen(WHITE);
+
+    gfx->fillRect(30, 15, 130, 30, WHITE);
+    gfx->setTextSize(1);
+    gfx->setTextColor(BLACK);
+
+    gfx->setCursor(40, 20);
+    gfx->printf("Infrared Info");
+
+    gfx->setCursor(40, 40);
+    gfx->printf("IR:Start");
+
+    // GFX_Print_3();
+
+    GFX_Print_1();
+}
+
+void Original_Test_11()
+{
+    gfx->fillScreen(WHITE);
+
+    gfx->fillRect(30, 30, 130, 30, WHITE);
+    gfx->setTextSize(1);
+    gfx->setTextColor(BLACK);
+
+    gfx->setCursor(30, 30);
+    gfx->printf("Battery Info");
+
+    GFX_Print_1();
+}
+
+void GFX_Print_IMU_Loop()
+{
+    myIMU.readSensor();
+    xyzFloat gValue = myIMU.getGValues();
+    xyzFloat angle = myIMU.getAngles();
+    float pitch = myIMU.getPitch();
+    float roll = myIMU.getRoll();
+
+    // obtain the x and y values of the magnetometer to calculate the heading angle (Yaw)
+    xyzFloat magValues = myIMU.getMagValues();
+    float yaw = atan2(magValues.y, magValues.x) * (180.0 / M_PI); // calculate heading angle
+
+    // Serial.println("G values (x,y,z):");
+    // Serial.print(gValue.x);
+    // Serial.print("   ");
+    // Serial.print(gValue.y);
+    // Serial.print("   ");
+    // Serial.println(gValue.z);
+    // Serial.println("Angles (x,y,z):");
+    // Serial.print(angle.x);
+    // Serial.print("   ");
+    // Serial.print(angle.y);
+    // Serial.print("   ");
+    // Serial.println(angle.z);
+
+    // Serial.print("Pitch = ");
+    // Serial.print(pitch);
+    // Serial.print("  |  Roll = ");
+    // Serial.print(roll);
+    // Serial.print("  |  Yaw = ");
+    // Serial.println(yaw);
+
+    // Serial.println();
+    // Serial.println();
+
+    gfx->setCursor(30, 40);
+    gfx->fillRect(50, 40, 100, 50, WHITE);
+
+    gfx->setCursor(30, 40);
+    gfx->setTextColor(RED);
+    gfx->printf("Pitch:[%.2f]", pitch);
+    // gfx->printf("G values (x,y,z): %.2f,%.2f,%.2f", gValue.x, gValue.y, gValue.z);
+
+    gfx->setCursor(30, 50);
+    gfx->printf("Roll:[%.2f]", roll);
+    // gfx->printf("Angles (x,y,z): %.2f,%.2f,%.2f", angle.x, angle.y, angle.z);
+
+    gfx->setCursor(30, 60);
+    gfx->printf("Yaw:[%.2f]", yaw);
+}
+
+void GFX_Print_Battery_Loop()
+{
+    Serial.print("ADC Value:");
+    Serial.println(analogRead(BATTERY_ADC_DATA));
+
+    Serial.printf("ADC Voltage: %.03f V\n", ((float)analogReadMilliVolts(BATTERY_ADC_DATA)) / 1000.0);
+
+    float battery_voltage = (((float)analogReadMilliVolts(BATTERY_ADC_DATA)) / 1000.0) * 2.0;
+
+    Serial.printf("Battery Voltage: %.03f V\n", battery_voltage);
+    Serial.println();
+
+    gfx->setCursor(30, 40);
+    gfx->fillRect(50, 40, 100, 50, WHITE);
+
+    gfx->setCursor(30, 40);
+    gfx->setTextColor(RED);
+    gfx->printf("BAT :%.03f V", battery_voltage);
+}
+
 void Original_Test_Loop()
 {
-    Original_Test_1();
-
-    while (1)
+    GFX_Print_TEST("Touch Test");
+    if (Skip_Current_Test == false)
     {
-        bool temp = false;
+        Original_Test_1();
 
-        if (CST816D->IIC_Interrupt_Flag == true)
+        while (1)
         {
-            CST816D->IIC_Interrupt_Flag = false;
+            bool temp = false;
 
-            int32_t touch_x = CST816D->IIC_Read_Device_Value(CST816D->Arduino_IIC_Touch::Value_Information::TOUCH_COORDINATE_X);
-            int32_t touch_y = CST816D->IIC_Read_Device_Value(CST816D->Arduino_IIC_Touch::Value_Information::TOUCH_COORDINATE_Y);
-            uint8_t fingers_number = CST816D->IIC_Read_Device_Value(CST816D->Arduino_IIC_Touch::Value_Information::TOUCH_FINGER_NUMBER);
-
-            GFX_Print_Touch_Info_Loop(touch_x, touch_y, fingers_number);
-
-            if (fingers_number > 0)
+            if (CST816D->IIC_Interrupt_Flag == true)
             {
-                if (touch_x > 15 && touch_x < 75 && touch_y > 100 && touch_y < 130)
+                CST816D->IIC_Interrupt_Flag = false;
+
+                int32_t touch_x = CST816D->IIC_Read_Device_Value(CST816D->Arduino_IIC_Touch::Value_Information::TOUCH_COORDINATE_X);
+                int32_t touch_y = CST816D->IIC_Read_Device_Value(CST816D->Arduino_IIC_Touch::Value_Information::TOUCH_COORDINATE_Y);
+                uint8_t fingers_number = CST816D->IIC_Read_Device_Value(CST816D->Arduino_IIC_Touch::Value_Information::TOUCH_FINGER_NUMBER);
+
+                GFX_Print_Touch_Info_Loop(touch_x, touch_y, fingers_number);
+
+                if (fingers_number > 0)
                 {
-                    Original_Test_1();
-                }
-                if (touch_x > 85 && touch_x < 145 && touch_y > 100 && touch_y < 130)
-                {
-                    temp = true;
-                }
-            }
-        }
-
-        if (temp == true)
-        {
-            break;
-        }
-    }
-
-    Original_Test_2();
-
-    while (1)
-    {
-        bool temp = false;
-
-        if (CST816D->IIC_Interrupt_Flag == true)
-        {
-            CST816D->IIC_Interrupt_Flag = false;
-
-            int32_t touch_x = CST816D->IIC_Read_Device_Value(CST816D->Arduino_IIC_Touch::Value_Information::TOUCH_COORDINATE_X);
-            int32_t touch_y = CST816D->IIC_Read_Device_Value(CST816D->Arduino_IIC_Touch::Value_Information::TOUCH_COORDINATE_Y);
-            uint8_t fingers_number = CST816D->IIC_Read_Device_Value(CST816D->Arduino_IIC_Touch::Value_Information::TOUCH_FINGER_NUMBER);
-
-            if (fingers_number > 0)
-            {
-                if (touch_x > 15 && touch_x < 75 && touch_y > 100 && touch_y < 130)
-                {
-                    Original_Test_2();
-                }
-                if (touch_x > 85 && touch_x < 145 && touch_y > 100 && touch_y < 130)
-                {
-                    temp = true;
-                }
-            }
-        }
-
-        if (temp == true)
-        {
-            break;
-        }
-    }
-
-    Original_Test_3();
-
-    while (1)
-    {
-        bool temp = false;
-
-        if (CST816D->IIC_Interrupt_Flag == true)
-        {
-            CST816D->IIC_Interrupt_Flag = false;
-
-            int32_t touch_x = CST816D->IIC_Read_Device_Value(CST816D->Arduino_IIC_Touch::Value_Information::TOUCH_COORDINATE_X);
-            int32_t touch_y = CST816D->IIC_Read_Device_Value(CST816D->Arduino_IIC_Touch::Value_Information::TOUCH_COORDINATE_Y);
-            uint8_t fingers_number = CST816D->IIC_Read_Device_Value(CST816D->Arduino_IIC_Touch::Value_Information::TOUCH_FINGER_NUMBER);
-
-            if (fingers_number > 0)
-            {
-                if (touch_x > 15 && touch_x < 75 && touch_y > 100 && touch_y < 130)
-                {
-                    Original_Test_3();
-                }
-                if (touch_x > 85 && touch_x < 145 && touch_y > 100 && touch_y < 130)
-                {
-                    temp = true;
-                }
-            }
-        }
-
-        if (temp == true)
-        {
-            break;
-        }
-    }
-
-    Original_Test_4();
-
-    while (1)
-    {
-        bool temp = false;
-
-        if (CST816D->IIC_Interrupt_Flag == true)
-        {
-            CST816D->IIC_Interrupt_Flag = false;
-
-            int32_t touch_x = CST816D->IIC_Read_Device_Value(CST816D->Arduino_IIC_Touch::Value_Information::TOUCH_COORDINATE_X);
-            int32_t touch_y = CST816D->IIC_Read_Device_Value(CST816D->Arduino_IIC_Touch::Value_Information::TOUCH_COORDINATE_Y);
-            uint8_t fingers_number = CST816D->IIC_Read_Device_Value(CST816D->Arduino_IIC_Touch::Value_Information::TOUCH_FINGER_NUMBER);
-
-            if (fingers_number > 0)
-            {
-                if (touch_x > 15 && touch_x < 75 && touch_y > 100 && touch_y < 130)
-                {
-                    Original_Test_4();
-                }
-                if (touch_x > 85 && touch_x < 145 && touch_y > 100 && touch_y < 130)
-                {
-                    temp = true;
-                }
-            }
-        }
-
-        if (temp == true)
-        {
-            break;
-        }
-    }
-
-    Original_Test_5();
-
-    while (1)
-    {
-        bool temp = false;
-
-        if (CST816D->IIC_Interrupt_Flag == true)
-        {
-            CST816D->IIC_Interrupt_Flag = false;
-
-            int32_t touch_x = CST816D->IIC_Read_Device_Value(CST816D->Arduino_IIC_Touch::Value_Information::TOUCH_COORDINATE_X);
-            int32_t touch_y = CST816D->IIC_Read_Device_Value(CST816D->Arduino_IIC_Touch::Value_Information::TOUCH_COORDINATE_Y);
-            uint8_t fingers_number = CST816D->IIC_Read_Device_Value(CST816D->Arduino_IIC_Touch::Value_Information::TOUCH_FINGER_NUMBER);
-
-            if (fingers_number > 0)
-            {
-                if (touch_x > 15 && touch_x < 75 && touch_y > 100 && touch_y < 130)
-                {
-                    Original_Test_5();
-                }
-                if (touch_x > 85 && touch_x < 145 && touch_y > 100 && touch_y < 130)
-                {
-                    temp = true;
-                }
-            }
-        }
-
-        if (temp == true)
-        {
-            break;
-        }
-    }
-
-    Original_Test_6();
-
-    while (1)
-    {
-        bool temp = false;
-
-        if (Microphone->IIS_Read_Data(IIS_Read_Buff, 100) == true)
-        {
-            // if (MAX98357A->IIS_Write_Data(IIS_Read_Buff, 10) == true)
-            // {
-            //     // Serial.printf("MAX98357A played successfully\n");
-            // 输出左声道数据
-            // Serial.printf("Left: %d\n", (int16_t)((int16_t)IIS_Read_Buff[0] | (int16_t)IIS_Read_Buff[1] << 8));
-            // 输出右声道数据
-            // Serial.printf("Right: %d\n", (int16_t)((int16_t)IIS_Read_Buff[2] | (int16_t)IIS_Read_Buff[3] << 8));
-
-            gfx->setCursor(30, 40);
-            gfx->fillRect(50, 40, 100, 30, WHITE);
-
-            gfx->setCursor(30, 40);
-            gfx->setTextColor(RED);
-            gfx->printf("Left:%d", (int16_t)((int16_t)IIS_Read_Buff[0] | (int16_t)IIS_Read_Buff[1] << 8));
-
-            gfx->setCursor(30, 50);
-            gfx->printf("Right:%d", (int16_t)((int16_t)IIS_Read_Buff[2] | (int16_t)IIS_Read_Buff[3] << 8));
-            delay(100);
-            // }
-        }
-
-        if (CST816D->IIC_Interrupt_Flag == true)
-        {
-            CST816D->IIC_Interrupt_Flag = false;
-
-            int32_t touch_x = CST816D->IIC_Read_Device_Value(CST816D->Arduino_IIC_Touch::Value_Information::TOUCH_COORDINATE_X);
-            int32_t touch_y = CST816D->IIC_Read_Device_Value(CST816D->Arduino_IIC_Touch::Value_Information::TOUCH_COORDINATE_Y);
-            uint8_t fingers_number = CST816D->IIC_Read_Device_Value(CST816D->Arduino_IIC_Touch::Value_Information::TOUCH_FINGER_NUMBER);
-
-            if (fingers_number > 0)
-            {
-                if (touch_x > 15 && touch_x < 75 && touch_y > 100 && touch_y < 130)
-                {
-                    Original_Test_6();
-                }
-                if (touch_x > 85 && touch_x < 145 && touch_y > 100 && touch_y < 130)
-                {
-                    temp = true;
-                }
-            }
-        }
-
-        if (temp == true)
-        {
-            break;
-        }
-    }
-
-    Original_Test_7();
-
-    while (1)
-    {
-        bool temp = false;
-
-        if (CST816D->IIC_Interrupt_Flag == true)
-        {
-            CST816D->IIC_Interrupt_Flag = false;
-
-            int32_t touch_x = CST816D->IIC_Read_Device_Value(CST816D->Arduino_IIC_Touch::Value_Information::TOUCH_COORDINATE_X);
-            int32_t touch_y = CST816D->IIC_Read_Device_Value(CST816D->Arduino_IIC_Touch::Value_Information::TOUCH_COORDINATE_Y);
-            uint8_t fingers_number = CST816D->IIC_Read_Device_Value(CST816D->Arduino_IIC_Touch::Value_Information::TOUCH_FINGER_NUMBER);
-
-            if (fingers_number > 0)
-            {
-                if (touch_x > 15 && touch_x < 75 && touch_y > 100 && touch_y < 130)
-                {
-                    Original_Test_7();
-                }
-                if (touch_x > 85 && touch_x < 145 && touch_y > 100 && touch_y < 130)
-                {
-                    temp = true;
-                }
-            }
-        }
-
-        if (temp == true)
-        {
-            break;
-        }
-    }
-
-    Original_Test_8();
-
-    while (1)
-    {
-        bool temp = false;
-
-        if (Music_Start_Playing_Flag == true)
-        {
-            audio.loop();
-        }
-
-        if (CST816D->IIC_Interrupt_Flag == true)
-        {
-            CST816D->IIC_Interrupt_Flag = false;
-
-            int32_t touch_x = CST816D->IIC_Read_Device_Value(CST816D->Arduino_IIC_Touch::Value_Information::TOUCH_COORDINATE_X);
-            int32_t touch_y = CST816D->IIC_Read_Device_Value(CST816D->Arduino_IIC_Touch::Value_Information::TOUCH_COORDINATE_Y);
-            uint8_t fingers_number = CST816D->IIC_Read_Device_Value(CST816D->Arduino_IIC_Touch::Value_Information::TOUCH_FINGER_NUMBER);
-
-            if (fingers_number > 0)
-            {
-                if (touch_x > 15 && touch_x < 75 && touch_y > 100 && touch_y < 130)
-                {
-                    Original_Test_8();
-                }
-                if (touch_x > 85 && touch_x < 145 && touch_y > 100 && touch_y < 130)
-                {
-                    temp = true;
-                }
-
-                if (Music_Start_Playing_Flag == true)
-                {
-                    if (touch_x > 30 && touch_x < 60 && touch_y > 60 && touch_y < 90)
+                    if (touch_x > 15 && touch_x < 75 && touch_y > 100 && touch_y < 130)
                     {
-                        Volume_Value--;
-                        if (Volume_Value < 0)
+                        GFX_Print_TEST("Touch Test");
+                        Original_Test_1();
+                        if (Skip_Current_Test == true)
                         {
-                            Volume_Value = 0;
+                            temp = true;
                         }
                     }
-                    if (touch_x > 103 && touch_x < 133 && touch_y > 60 && touch_y < 90)
+                    if (touch_x > 85 && touch_x < 145 && touch_y > 100 && touch_y < 130)
                     {
-                        Volume_Value++;
-                        if (Volume_Value > 21)
-                        {
-                            Volume_Value = 21;
-                        }
+                        temp = true;
                     }
-
-                    audio.setVolume(Volume_Value);
-                    GFX_Print_Volume_Value();
-                    delay(300);
                 }
             }
-        }
 
-        if (temp == true)
-        {
-            break;
+            if (temp == true)
+            {
+                break;
+            }
         }
     }
+
+    GFX_Print_TEST("LCD Edge Detection Test");
+    if (Skip_Current_Test == false)
+    {
+        Original_Test_2();
+
+        while (1)
+        {
+            bool temp = false;
+
+            if (CST816D->IIC_Interrupt_Flag == true)
+            {
+                CST816D->IIC_Interrupt_Flag = false;
+
+                int32_t touch_x = CST816D->IIC_Read_Device_Value(CST816D->Arduino_IIC_Touch::Value_Information::TOUCH_COORDINATE_X);
+                int32_t touch_y = CST816D->IIC_Read_Device_Value(CST816D->Arduino_IIC_Touch::Value_Information::TOUCH_COORDINATE_Y);
+                uint8_t fingers_number = CST816D->IIC_Read_Device_Value(CST816D->Arduino_IIC_Touch::Value_Information::TOUCH_FINGER_NUMBER);
+
+                if (fingers_number > 0)
+                {
+                    if (touch_x > 15 && touch_x < 75 && touch_y > 100 && touch_y < 130)
+                    {
+                        GFX_Print_TEST("LCD Edge Detection Test");
+                        Original_Test_2();
+                        if (Skip_Current_Test == true)
+                        {
+                            temp = true;
+                        }
+                    }
+                    if (touch_x > 85 && touch_x < 145 && touch_y > 100 && touch_y < 130)
+                    {
+                        temp = true;
+                    }
+                }
+            }
+
+            if (temp == true)
+            {
+                break;
+            }
+        }
+    }
+
+    GFX_Print_TEST("LCD Backlight Test");
+    if (Skip_Current_Test == false)
+    {
+        Original_Test_3();
+
+        while (1)
+        {
+            bool temp = false;
+
+            if (CST816D->IIC_Interrupt_Flag == true)
+            {
+                CST816D->IIC_Interrupt_Flag = false;
+
+                int32_t touch_x = CST816D->IIC_Read_Device_Value(CST816D->Arduino_IIC_Touch::Value_Information::TOUCH_COORDINATE_X);
+                int32_t touch_y = CST816D->IIC_Read_Device_Value(CST816D->Arduino_IIC_Touch::Value_Information::TOUCH_COORDINATE_Y);
+                uint8_t fingers_number = CST816D->IIC_Read_Device_Value(CST816D->Arduino_IIC_Touch::Value_Information::TOUCH_FINGER_NUMBER);
+
+                if (fingers_number > 0)
+                {
+                    if (touch_x > 15 && touch_x < 75 && touch_y > 100 && touch_y < 130)
+                    {
+                        GFX_Print_TEST("LCD Backlight Test");
+                        Original_Test_3();
+                        if (Skip_Current_Test == true)
+                        {
+                            temp = true;
+                        }
+                    }
+                    if (touch_x > 85 && touch_x < 145 && touch_y > 100 && touch_y < 130)
+                    {
+                        temp = true;
+                    }
+                }
+            }
+
+            if (temp == true)
+            {
+                break;
+            }
+        }
+    }
+
+    GFX_Print_TEST("LCD Color Test");
+    if (Skip_Current_Test == false)
+    {
+        Original_Test_4();
+
+        while (1)
+        {
+            bool temp = false;
+
+            if (CST816D->IIC_Interrupt_Flag == true)
+            {
+                CST816D->IIC_Interrupt_Flag = false;
+
+                int32_t touch_x = CST816D->IIC_Read_Device_Value(CST816D->Arduino_IIC_Touch::Value_Information::TOUCH_COORDINATE_X);
+                int32_t touch_y = CST816D->IIC_Read_Device_Value(CST816D->Arduino_IIC_Touch::Value_Information::TOUCH_COORDINATE_Y);
+                uint8_t fingers_number = CST816D->IIC_Read_Device_Value(CST816D->Arduino_IIC_Touch::Value_Information::TOUCH_FINGER_NUMBER);
+
+                if (fingers_number > 0)
+                {
+                    if (touch_x > 15 && touch_x < 75 && touch_y > 100 && touch_y < 130)
+                    {
+                        GFX_Print_TEST("LCD Color Test");
+                        Original_Test_4();
+                        if (Skip_Current_Test == true)
+                        {
+                            temp = true;
+                        }
+                    }
+                    if (touch_x > 85 && touch_x < 145 && touch_y > 100 && touch_y < 130)
+                    {
+                        temp = true;
+                    }
+                }
+            }
+
+            if (temp == true)
+            {
+                break;
+            }
+        }
+    }
+
+    GFX_Print_TEST("LED Color Test");
+    if (Skip_Current_Test == false)
+    {
+        Original_Test_5();
+
+        while (1)
+        {
+            bool temp = false;
+
+            if (CST816D->IIC_Interrupt_Flag == true)
+            {
+                CST816D->IIC_Interrupt_Flag = false;
+
+                int32_t touch_x = CST816D->IIC_Read_Device_Value(CST816D->Arduino_IIC_Touch::Value_Information::TOUCH_COORDINATE_X);
+                int32_t touch_y = CST816D->IIC_Read_Device_Value(CST816D->Arduino_IIC_Touch::Value_Information::TOUCH_COORDINATE_Y);
+                uint8_t fingers_number = CST816D->IIC_Read_Device_Value(CST816D->Arduino_IIC_Touch::Value_Information::TOUCH_FINGER_NUMBER);
+
+                if (fingers_number > 0)
+                {
+                    if (touch_x > 15 && touch_x < 75 && touch_y > 100 && touch_y < 130)
+                    {
+                        GFX_Print_TEST("LED Color Test");
+                        Original_Test_5();
+                        if (Skip_Current_Test == true)
+                        {
+                            temp = true;
+                        }
+                    }
+                    if (touch_x > 85 && touch_x < 145 && touch_y > 100 && touch_y < 130)
+                    {
+                        temp = true;
+                    }
+                }
+            }
+
+            if (temp == true)
+            {
+                break;
+            }
+        }
+    }
+
+    GFX_Print_TEST("Microphone Test");
+    if (Skip_Current_Test == false)
+    {
+        Original_Test_6();
+
+        while (1)
+        {
+            bool temp = false;
+
+            if (Microphone->IIS_Read_Data(IIS_Read_Buff, 100) == true)
+            {
+                // if (MAX98357A->IIS_Write_Data(IIS_Read_Buff, 10) == true)
+                // {
+                //     // Serial.printf("MAX98357A played successfully\n");
+                // 输出左声道数据
+                // Serial.printf("Left: %d\n", (int16_t)((int16_t)IIS_Read_Buff[0] | (int16_t)IIS_Read_Buff[1] << 8));
+                // 输出右声道数据
+                // Serial.printf("Right: %d\n", (int16_t)((int16_t)IIS_Read_Buff[2] | (int16_t)IIS_Read_Buff[3] << 8));
+
+                gfx->setCursor(30, 40);
+                gfx->fillRect(50, 40, 100, 30, WHITE);
+
+                gfx->setCursor(30, 40);
+                gfx->setTextColor(RED);
+                gfx->printf("Left:%d", (int16_t)((int16_t)IIS_Read_Buff[0] | (int16_t)IIS_Read_Buff[1] << 8));
+
+                gfx->setCursor(30, 50);
+                gfx->printf("Right:%d", (int16_t)((int16_t)IIS_Read_Buff[2] | (int16_t)IIS_Read_Buff[3] << 8));
+                delay(100);
+                // }
+            }
+
+            if (CST816D->IIC_Interrupt_Flag == true)
+            {
+                CST816D->IIC_Interrupt_Flag = false;
+
+                int32_t touch_x = CST816D->IIC_Read_Device_Value(CST816D->Arduino_IIC_Touch::Value_Information::TOUCH_COORDINATE_X);
+                int32_t touch_y = CST816D->IIC_Read_Device_Value(CST816D->Arduino_IIC_Touch::Value_Information::TOUCH_COORDINATE_Y);
+                uint8_t fingers_number = CST816D->IIC_Read_Device_Value(CST816D->Arduino_IIC_Touch::Value_Information::TOUCH_FINGER_NUMBER);
+
+                if (fingers_number > 0)
+                {
+                    if (touch_x > 15 && touch_x < 75 && touch_y > 100 && touch_y < 130)
+                    {
+                        GFX_Print_TEST("Microphone Test");
+                        Original_Test_6();
+                        if (Skip_Current_Test == true)
+                        {
+                            temp = true;
+                        }
+                    }
+                    if (touch_x > 85 && touch_x < 145 && touch_y > 100 && touch_y < 130)
+                    {
+                        temp = true;
+                    }
+                }
+            }
+
+            if (temp == true)
+            {
+                break;
+            }
+        }
+    }
+
+    GFX_Print_TEST("WIFI STA Test");
+    if (Skip_Current_Test == false)
+    {
+        Original_Test_7();
+
+        while (1)
+        {
+            bool temp = false;
+
+            if (CST816D->IIC_Interrupt_Flag == true)
+            {
+                CST816D->IIC_Interrupt_Flag = false;
+
+                int32_t touch_x = CST816D->IIC_Read_Device_Value(CST816D->Arduino_IIC_Touch::Value_Information::TOUCH_COORDINATE_X);
+                int32_t touch_y = CST816D->IIC_Read_Device_Value(CST816D->Arduino_IIC_Touch::Value_Information::TOUCH_COORDINATE_Y);
+                uint8_t fingers_number = CST816D->IIC_Read_Device_Value(CST816D->Arduino_IIC_Touch::Value_Information::TOUCH_FINGER_NUMBER);
+
+                if (fingers_number > 0)
+                {
+                    if (touch_x > 15 && touch_x < 75 && touch_y > 100 && touch_y < 130)
+                    {
+                        GFX_Print_TEST("WIFI STA Test");
+                        Original_Test_7();
+                        if (Skip_Current_Test == true)
+                        {
+                            temp = true;
+                        }
+                    }
+                    if (touch_x > 85 && touch_x < 145 && touch_y > 100 && touch_y < 130)
+                    {
+                        temp = true;
+                    }
+                }
+            }
+
+            if (temp == true)
+            {
+                break;
+            }
+        }
+    }
+
+    GFX_Print_TEST("Wifi Music Test");
+    if (Skip_Current_Test == false)
+    {
+        Original_Test_8();
+
+        while (1)
+        {
+            bool temp = false;
+
+            if (Music_Start_Playing_Flag == true)
+            {
+                audio.loop();
+            }
+
+            if (CST816D->IIC_Interrupt_Flag == true)
+            {
+                CST816D->IIC_Interrupt_Flag = false;
+
+                int32_t touch_x = CST816D->IIC_Read_Device_Value(CST816D->Arduino_IIC_Touch::Value_Information::TOUCH_COORDINATE_X);
+                int32_t touch_y = CST816D->IIC_Read_Device_Value(CST816D->Arduino_IIC_Touch::Value_Information::TOUCH_COORDINATE_Y);
+                uint8_t fingers_number = CST816D->IIC_Read_Device_Value(CST816D->Arduino_IIC_Touch::Value_Information::TOUCH_FINGER_NUMBER);
+
+                if (fingers_number > 0)
+                {
+                    if (touch_x > 15 && touch_x < 75 && touch_y > 100 && touch_y < 130)
+                    {
+                        GFX_Print_TEST("Wifi Music Test");
+                        Original_Test_8();
+                        if (Skip_Current_Test == true)
+                        {
+                            temp = true;
+                        }
+                    }
+                    if (touch_x > 85 && touch_x < 145 && touch_y > 100 && touch_y < 130)
+                    {
+                        temp = true;
+                    }
+
+                    if (Music_Start_Playing_Flag == true)
+                    {
+                        if (touch_x > 30 && touch_x < 60 && touch_y > 60 && touch_y < 90)
+                        {
+                            Volume_Value--;
+                            if (Volume_Value < 0)
+                            {
+                                Volume_Value = 0;
+                            }
+                        }
+                        if (touch_x > 103 && touch_x < 133 && touch_y > 60 && touch_y < 90)
+                        {
+                            Volume_Value++;
+                            if (Volume_Value > 21)
+                            {
+                                Volume_Value = 21;
+                            }
+                        }
+
+                        audio.setVolume(Volume_Value);
+                        GFX_Print_Volume_Value();
+                        delay(300);
+                    }
+                }
+            }
+
+            if (temp == true)
+            {
+                break;
+            }
+        }
+    }
+#ifdef T_Circle_S3_Infrared_Expansion
+
+    GFX_Print_TEST("IMU Test");
+    if (Skip_Current_Test == false)
+    {
+        Original_Test_9();
+
+        while (1)
+        {
+            bool temp = false;
+
+            if (millis() > CycleTime)
+            {
+                GFX_Print_IMU_Loop();
+                CycleTime = millis() + 100;
+            }
+
+            if (CST816D->IIC_Interrupt_Flag == true)
+            {
+                CST816D->IIC_Interrupt_Flag = false;
+
+                int32_t touch_x = CST816D->IIC_Read_Device_Value(CST816D->Arduino_IIC_Touch::Value_Information::TOUCH_COORDINATE_X);
+                int32_t touch_y = CST816D->IIC_Read_Device_Value(CST816D->Arduino_IIC_Touch::Value_Information::TOUCH_COORDINATE_Y);
+                uint8_t fingers_number = CST816D->IIC_Read_Device_Value(CST816D->Arduino_IIC_Touch::Value_Information::TOUCH_FINGER_NUMBER);
+
+                if (fingers_number > 0)
+                {
+                    if (touch_x > 15 && touch_x < 75 && touch_y > 100 && touch_y < 130)
+                    {
+                        GFX_Print_TEST("IMU Test");
+                        Original_Test_9();
+                        if (Skip_Current_Test == true)
+                        {
+                            temp = true;
+                        }
+                    }
+                    if (touch_x > 85 && touch_x < 145 && touch_y > 100 && touch_y < 130)
+                    {
+                        temp = true;
+                    }
+                }
+            }
+
+            if (temp == true)
+            {
+                break;
+            }
+        }
+    }
+
+    GFX_Print_TEST("Infrared Test");
+    if (Skip_Current_Test == false)
+    {
+        Original_Test_10();
+
+        while (1)
+        {
+            bool temp = false;
+
+            // 检查是否接收到红外信号
+            if (irrecv.decode(&results))
+            {
+                // // 打印接收到的红外信号
+                // Serial.println("received ir signal:");
+                // serialPrintUint64(results.value, HEX);
+                // Serial.println("");
+
+                // 解码并打印红外信号的详细信息
+                String description = resultToHumanReadableBasic(&results);
+                Serial.print(description);
+
+                gfx->fillRect(15, 30, 130, 60, WHITE);
+                gfx->setTextSize(1);
+                if (results.value == 0x12345678)
+                {
+                    gfx->setTextColor(DARKGREEN);
+
+                    gfx->setCursor(25, 40);
+                    gfx->printf("IR:Receive success");
+
+                    gfx->setCursor(25, 50);
+                    gfx->printf("IR:id->0x12345678");
+
+                    Serial.println("ir:receive success");
+                    Serial.println("ir:id->0x12345678");
+
+                    leds[0] = CRGB::Green;
+                    FastLED.show();
+                }
+                else if (results.value == 0x12345677)
+                {
+                    gfx->setTextColor(DARKGREEN);
+
+                    gfx->setCursor(25, 40);
+                    gfx->printf("IR:Receive success");
+
+                    gfx->setCursor(25, 50);
+                    gfx->printf("IR:id->0x12345677");
+
+                    Serial.println("ir:receive success");
+                    Serial.println("ir:id->0x12345677");
+
+                    leds[0] = CRGB::Blue;
+                    FastLED.show();
+                }
+                else
+                {
+                    gfx->setTextColor(RED);
+
+                    gfx->setCursor(35, 40);
+                    gfx->printf("IR:Receive fail");
+                    Serial.println("ir:receive fail");
+
+                    leds[0] = CRGB::Red;
+                    FastLED.show();
+                }
+
+                // 重新启动接收器
+                irrecv.resume();
+            }
+
+            if (digitalRead(BOOT_KEY) == LOW)
+            {
+                delay(300);
+
+                gfx->fillRect(30, 30, 130, 20, WHITE);
+                gfx->setTextSize(1);
+                gfx->setTextColor(BLUE);
+
+                gfx->setCursor(40, 40);
+                gfx->printf("IR:Send");
+
+                // 发送数据（这里可以根据需要修改发送的数据）
+                Serial.println("infrared send data");
+
+                irrecv.disableIRIn();
+
+                if (Led_Color_Switch_Flag == false)
+                {
+                    // 例如，发送一个固定的NEC协议的红外信号
+                    irsend.sendNEC(0x12345678, 32); // 发送一个NEC协议的红外信号
+                }
+                else
+                {
+                    irsend.sendNEC(0x12345677, 32);
+                }
+                Led_Color_Switch_Flag = !Led_Color_Switch_Flag;
+
+                irrecv.enableIRIn();
+            }
+
+            if (CST816D->IIC_Interrupt_Flag == true)
+            {
+                CST816D->IIC_Interrupt_Flag = false;
+
+                int32_t touch_x = CST816D->IIC_Read_Device_Value(CST816D->Arduino_IIC_Touch::Value_Information::TOUCH_COORDINATE_X);
+                int32_t touch_y = CST816D->IIC_Read_Device_Value(CST816D->Arduino_IIC_Touch::Value_Information::TOUCH_COORDINATE_Y);
+                uint8_t fingers_number = CST816D->IIC_Read_Device_Value(CST816D->Arduino_IIC_Touch::Value_Information::TOUCH_FINGER_NUMBER);
+
+                if (fingers_number > 0)
+                {
+                    if (touch_x > 15 && touch_x < 75 && touch_y > 100 && touch_y < 130)
+                    {
+                        leds[0] = CRGB::Black;
+                        FastLED.show();
+                        GFX_Print_TEST("Infrared Test");
+                        Original_Test_10();
+                        if (Skip_Current_Test == true)
+                        {
+                            temp = true;
+                        }
+                    }
+                    if (touch_x > 85 && touch_x < 145 && touch_y > 100 && touch_y < 130)
+                    {
+                        temp = true;
+                    }
+                }
+            }
+
+            if (temp == true)
+            {
+                leds[0] = CRGB::Black;
+                FastLED.show();
+                break;
+            }
+        }
+    }
+
+    GFX_Print_TEST("Battery Test");
+    if (Skip_Current_Test == false)
+    {
+        Original_Test_11();
+
+        while (1)
+        {
+            bool temp = false;
+
+            if (millis() > CycleTime)
+            {
+                GFX_Print_Battery_Loop();
+                CycleTime = millis() + 100;
+            }
+
+            if (CST816D->IIC_Interrupt_Flag == true)
+            {
+                CST816D->IIC_Interrupt_Flag = false;
+
+                int32_t touch_x = CST816D->IIC_Read_Device_Value(CST816D->Arduino_IIC_Touch::Value_Information::TOUCH_COORDINATE_X);
+                int32_t touch_y = CST816D->IIC_Read_Device_Value(CST816D->Arduino_IIC_Touch::Value_Information::TOUCH_COORDINATE_Y);
+                uint8_t fingers_number = CST816D->IIC_Read_Device_Value(CST816D->Arduino_IIC_Touch::Value_Information::TOUCH_FINGER_NUMBER);
+
+                if (fingers_number > 0)
+                {
+                    if (touch_x > 15 && touch_x < 75 && touch_y > 100 && touch_y < 130)
+                    {
+                        GFX_Print_TEST("Battery Test");
+                        Original_Test_11();
+                        if (Skip_Current_Test == true)
+                        {
+                            temp = true;
+                        }
+                    }
+                    if (touch_x > 85 && touch_x < 145 && touch_y > 100 && touch_y < 130)
+                    {
+                        temp = true;
+                    }
+                }
+            }
+
+            if (temp == true)
+            {
+                break;
+            }
+        }
+    }
+
+#endif
 }
 
 void setup()
@@ -965,6 +1505,17 @@ void setup()
     ledcAttachPin(LCD_BL, 1);
     ledcSetup(1, 2000, 8);
     ledcWrite(1, 255);
+
+    pinMode(BOOT_KEY, INPUT_PULLUP);
+
+    // 启动红外发射器和接收器
+    irsend.begin();
+    irrecv.enableIRIn();
+    Serial.println("IR Receiver is now running");
+
+    // 测量电池
+    pinMode(BATTERY_ADC_DATA, INPUT_PULLDOWN);
+    analogReadResolution(12);
 
     if (CST816D->begin() == false)
     {
@@ -1042,6 +1593,32 @@ void setup()
 
     Volume_Value = 3;
     audio.setVolume(Volume_Value); // 0...21,Volume setting
+
+#ifdef T_Circle_S3_Infrared_Expansion
+    Wire.setPins(ICM20948_SDA, ICM20948_SCL);
+    Wire.begin();
+
+    if (myIMU.init() == false)
+    {
+        Serial.println("ICM20948 AG initialization failed");
+        delay(1000);
+    }
+    else
+    {
+        Serial.println("ICM20948 init successful");
+    }
+
+    if (myIMU.initMagnetometer() == false)
+    {
+        Serial.println("ICM20948 M initialization failed");
+        delay(1000);
+    }
+    else
+    {
+        Serial.println("ICM20948 initMagnetometer successful");
+    }
+
+#endif
 
     Original_Test_Loop();
 
