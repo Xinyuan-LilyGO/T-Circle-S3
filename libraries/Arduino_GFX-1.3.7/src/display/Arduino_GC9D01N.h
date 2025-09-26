@@ -146,10 +146,11 @@ static const uint8_t gc9d01n_init_operations[] = {
 
     WRITE_C8_D8, 0xF9, 0x40,
 
-    WRITE_COMMAND_8, 0x9B,
-    WRITE_BYTES, 5,
-    0x3B, 0x93, 0x33, 0x7F,
-    0x00,
+    WRITE_C8_D8, 0x9B, 0x3B,
+
+    WRITE_COMMAND_8, 0x93,
+    WRITE_BYTES, 3,
+    0x33, 0x7F, 0x00,
 
     WRITE_C8_D8, 0x7E, 0x30,
 
