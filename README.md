@@ -1,12 +1,11 @@
 <!--
  * @Description: None
- * @version: V1.0.0
  * @Author: LILYGO_L
- * @Date: 2023-09-11 16:13:14
- * @LastEditors: Please set LastEditors
- * @LastEditTime: 2025-02-14 14:51:33
+ * @Date: 2025-01-02 11:24:39
+ * @LastEditTime: 2025-10-25 17:18:55
  * @License: GPL 3.0
 -->
+
 <h1 align = "center">T-Circle-S3</h1>
 
 <p align="center" width="100%">
@@ -20,12 +19,14 @@
 | :-------------------------------: | :-------------------------------: |:--------------: |
 | T-Circle-S3_V1.0                      | 2024-08-15                    |   Original version      |
 | T-Circle-S3_V1.1                      | 2025-02-14                    |    Replace microphone model   |
+| T-Circle-S3-Infrared-Expansion_V1.0                      | 2025-10-25                    |T-Circle-S3 Infrared Expansion Board    |
 
 ## PurchaseLink
 
 | Product                     | SOC           |  FLASH  |  PSRAM   | Link                   |
 | :------------------------: | :-----------: |:-------: | :---------: | :------------------: |
 | T-Circle-S3_V1.0-V1.1   | ESP32S3R8 |   16M   | 8M (Octal SPI) |  [LILYGO Mall](https://lilygo.cc/products/t-circle-s3?_pos=1&_sid=6fa6d0d3e&_ss=r)  |
+| T-Circle-S3-Infrared-Expansion_V1.0   |  |     | |  [Null]()   |
 
 ## Directory
 - [Describe](#describe)
@@ -40,6 +41,8 @@
 ## Describe
 
 T-Circle-S3 is a development board with a 0.75-inch onboard small screen developed based on the ESP32S3, equipped with a speaker, microphone, and three-color LED lights. It has six programmable input/output IO ports on the back, which can be expanded to connect a variety of peripherals.
+
+T-Circle-S3-Infrared-Expansion is an infrared expansion board for the T-Circle-S3, featuring an onboard infrared sensor, 9-axis sensor, and battery.
 
 ## Preview
 
@@ -62,6 +65,8 @@ T-Circle-S3 is a development board with a 0.75-inch onboard small screen develop
 </p>
 
 ## Module
+
+### T-Circle-S3 Section
 
 ### 1.MCU
 
@@ -131,10 +136,31 @@ T-Circle-S3 is a development board with a 0.75-inch onboard small screen develop
 * Dependent libraries: 
     >[FastLED-3.6.0](https://github.com/FastLED/FastLED)
 
+### T-Circle-S3-Infrared-Expansion Section
+
+### 1. Infrared Module
+
+* Chip: TSOP75338TR
+* Bus Communication Protocol: RMT
+* Related Documentation:
+    > [TSOP75338TR](./information/TSOP75338TR.pdf)
+* Dependent Libraries:
+    > [IRremoteESP8266](https://github.com/crankyoldgit/IRremoteESP8266)
+
+### 2. IMU
+
+* Chip: ICM20948
+* Bus Communication Protocol: IIC
+* Related Documentation:
+    > [ICM20948](./information/ICM20948.pdf)
+* Dependent Libraries:
+    > [ICM20948_WE](https://github.com/wollewald/ICM20948_WE)
+
 ## QuickStart
 
 ### Examples Support
 
+#### T-Circle-S3 examples
 | Example | `[Platformio IDE][espressif32-v6.5.0]`<br />`[Arduino IDE][esp32_v2.0.14]` | `[ESP-IDF][esp-idf-V4.4.8]`| `[ESP-IDF][esp-idf-V5.3.2]`| Description | Picture |
 | ------  | ------  | ------ | ------ | ------ | ------ | 
 | [Animated_Eyes_1](./examples/Animated_Eyes_1) |  <p align="center">![alt text][supported] | || |  |
@@ -155,6 +181,12 @@ T-Circle-S3 is a development board with a 0.75-inch onboard small screen develop
 | [lilygo_s3_apps](https://github.com/Xinyuan-LilyGO/T-Circle-S3/tree/esp-idf-V4.4.8/examples/lilygo_s3_apps) || <p align="center">![alt text][supported] | | This example is a voice control example provided by Grovety. Below is the original link: <br /> [Grovety lilygo_s3_apps](https://github.com/Grovety/lilygo_s3_apps)| <p align="center"> <img src="image/1.jpg" alt="example" width="100%"> </p> |
 | [XiaoZhi_AI_Chatbot](https://github.com/78/xiaozhi-esp32?tab=readme-ov-file) | || <p align="center">![alt text][supported] | This example is a Xiaozhi AI example, provided by Xiaoxia.| <p align="center"> <img src="image/15.jpg" alt="example" width="100%"> </p> |
 
+#### T-Circle-S3-Infrared-Expansion examples
+| Example | `[Platformio IDE][espressif32-v6.5.0]`<br />`[Arduino IDE][esp32_v2.0.14]` | `[ESP-IDF][esp-idf-V4.4.8]`| `[ESP-IDF][esp-idf-V5.3.2]`| Description | Picture |
+| ------  | ------  | ------ | ------ | ------ | ------ | 
+| [RMT](./examples/RMT) |  <p align="center">![alt text][supported] | || |  |
+| [ICM20948](./examples/ICM20948) | <p align="center">![alt text][supported] | | ||  |
+
 [supported]: https://img.shields.io/badge/-supported-green "example"
 
 | Firmware | Description | Picture |
@@ -165,6 +197,7 @@ T-Circle-S3 is a development board with a 0.75-inch onboard small screen develop
 | [GFX_Wifi_STA_Contract](./firmware/[T-Circle-S3_V1.0][GFX_Wifi_STA_Contract]_firmware_V1.0.0) | Original version |  |
 | [lilygo_s3_apps](./firmware/[T-Circle-S3_V1.0]_[lilygo_s3_apps]_firmware_V1.0.0.bin) | Original version |  |
 | [xiaozhi_esp32](./firmware/[T-Circle-S3_V1.0][xiaozhi-esp32_V1.0.1]_firmware_202501240943.bin) | |  |
+| [Original_Test(T_Circle_S3_Infrared_Expansion)](./firmware/[T-Circle-S3_V1.0][T_Circle_S3_Infrared_Expansion_V1.0][Original_Test]_firmware_202506091350.bin) | |  |
 
 ### PlatformIO
 1. Install[VisualStudioCode](https://code.visualstudio.com/Download),Choose installation based on your system type.
@@ -225,44 +258,10 @@ T-Circle-S3 is a development board with a 0.75-inch onboard small screen develop
 
 ## PinOverview
 
-| LCD screen pins  | ESP32S3 pins|
-| :------------------: | :------------------:|
-| MOSI         | IO17       |
-| DC         | IO16       |
-| SCLK         | IO15       |
-| CS         | IO13       |
-| BL         | IO18       |
+For pin definitions, please refer to the configuration file: 
+<br />
 
-| Touch chip pins  | ESP32S3 pins|
-| :------------------: | :------------------:|
-| INT         | IO12       |
-| SDA         | IO11       |
-| SCL         | IO14       |
-
-> #### T-Circle-S3_V1.0 version
-> | Microphone pins  | ESP32S3 pins|
-> | :------------------: | :------------------:|
-> | BCLK         | IO7       |
-> | WS         | IO9       |
-> | DATA         | IO8       |
-
-> #### T-Circle-S3_V1.1 version
-> | Microphone pins  | ESP32S3 pins|
-> | :------------------: | :------------------:|
-> | LRCLK         | IO9       |
-> | DATA         | IO8       |
-
-| Speaker pins  | ESP32S3 pins|
-| :------------------: | :------------------:|
-| BCLK         | IO5       |
-| LRCLK         | IO4       |
-| SD_MODE         | IO45       |
-| DATA         | IO6       |
-
-| LED pins  | ESP32S3 pins|
-| :------------------: | :------------------:|
-| CLOCK         | IO39       |
-| DATA         | IO38       |
+[pin_config.h](./libraries/Mylibrary/pin_config.h)  
 
 ## RelatedTests
 

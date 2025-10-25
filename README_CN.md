@@ -1,12 +1,11 @@
 <!--
  * @Description: None
- * @version: V1.0.0
  * @Author: LILYGO_L
- * @Date: 2023-09-11 16:13:14
- * @LastEditors: Please set LastEditors
- * @LastEditTime: 2025-02-14 14:50:05
+ * @Date: 2025-01-02 11:24:39
+ * @LastEditTime: 2025-10-25 17:19:03
  * @License: GPL 3.0
 -->
+
 <h1 align = "center">T-Circle-S3</h1>
 
 <p align="center" width="100%">
@@ -20,12 +19,14 @@
 | :-------------------------------: | :-------------------------------: |:--------------: |
 | T-Circle-S3_V1.0                      | 2024-08-15                    | 初始版本      |
 | T-Circle-S3_V1.1                      | 2025-02-14                    |更换麦克风型号    |
+| T-Circle-S3-Infrared-Expansion_V1.0                      | 2025-10-25                    |T-Circle-S3红外扩展板    |
 
 ## 购买链接
 
 | Product                     | SOC           |  FLASH  |  PSRAM   | Link                   |
 | :------------------------: | :-----------: |:-------: | :---------: | :------------------: |
 | T-Circle-S3_V1.0-V1.1   | ESP32S3R8 |   16M   | 8M (Octal SPI) |  [LILYGO Mall](https://lilygo.cc/products/t-circle-s3?_pos=1&_sid=6fa6d0d3e&_ss=r)   |
+| T-Circle-S3-Infrared-Expansion_V1.0   |  |     | |  [Null]()   |
 
 ## 目录
 - [描述](#描述)
@@ -40,6 +41,8 @@
 ## 描述
 
 T-Circle-S3是一款基于ESP32S3开发的板载0.75寸小屏的开发板，配备有扬声器麦克风和三色LED灯，背部有六个可编程输入输出IO口可扩展多种外设。
+
+T-Circle-S3-Infrared-Expansion为T-Circle-S3的红外扩展板，板载有红外线感应器、9轴传感器和电池。
 
 ## 预览
 
@@ -63,6 +66,8 @@ T-Circle-S3是一款基于ESP32S3开发的板载0.75寸小屏的开发板，配�
 
 ## 模块
 
+### T-Circle-S3 部分
+
 ### 1. MCU
 
 * 芯片：ESP32-S3-R8
@@ -79,7 +84,7 @@ T-Circle-S3是一款基于ESP32S3开发的板载0.75寸小屏的开发板，配�
 * 驱动芯片：GC9D01N
 * 总线通信协议：标准SPI
 * 相关资料：
-    >[GC9D01N](./information/GC9D01N.pdf) <br />
+    >[GC9D01N](./information/GC9D01N.pdf)  
     >[TFT_eSPI-2.5.43](https://github.com/Bodmer/TFT_eSPI)
 * 依赖库：
     >[Arduino_GFX-1.3.7](https://github.com/moononournation/Arduino_GFX)
@@ -100,7 +105,7 @@ T-Circle-S3是一款基于ESP32S3开发的板载0.75寸小屏的开发板，配�
 * 相关资料：
     >[MAX98357A](./information/MAX98357AETE+T.pdf)
 * 依赖库：
-    >[Arduino_DriveBus-1.1.16]() <br />
+    >[Arduino_DriveBus-1.1.16]()  
     >[ESP32-audioI2S-3.0.6](https://github.com/schreibfaul1/ESP32-audioI2S)
 
 ### 5. 麦克风
@@ -130,10 +135,31 @@ T-Circle-S3是一款基于ESP32S3开发的板载0.75寸小屏的开发板，配�
 * 依赖库：
     >[FastLED-3.6.0](https://github.com/FastLED/FastLED)
 
+### T-Circle-S3-Infrared-Expansion 部分
+
+### 1. 红外模块
+
+* 芯片：TSOP75338TR
+* 总线通信协议：RMT
+* 相关资料：
+    >[TSOP75338TR](./information/TSOP75338TR.pdf)
+* 依赖库：
+    >[IRremoteESP8266](https://github.com/crankyoldgit/IRremoteESP8266)
+
+### 2. IMU
+
+* 芯片：ICM20948
+* 总线通信协议：IIC
+* 相关资料：
+    >[ICM20948](./information/ICM20948.pdf)
+* 依赖库：
+    >[ICM20948_WE](https://github.com/wollewald/ICM20948_WE)
+
 ## 快速开始
 
 ### 示例支持
 
+#### T-Circle-S3 示例
 | Example | `[Platformio IDE][espressif32-v6.5.0]`<br />`[Arduino IDE][esp32_v2.0.14]` | `[ESP-IDF][esp-idf-V4.4.8]`| `[ESP-IDF][esp-idf-V5.3.2]`| Description | Picture |
 | ------  | ------  | ------ | ------ | ------ | ------ | 
 | [Animated_Eyes_1](./examples/Animated_Eyes_1) |  <p align="center">![alt text][supported] | || |  |
@@ -154,6 +180,12 @@ T-Circle-S3是一款基于ESP32S3开发的板载0.75寸小屏的开发板，配�
 | [lilygo_s3_apps](https://github.com/Xinyuan-LilyGO/T-Circle-S3/tree/esp-idf-V4.4.8/examples/lilygo_s3_apps) | | <p align="center">![alt text][supported] || 该示例为语音控制示例，由Grovety提供，以下是原始链接: <br /> [Grovety lilygo_s3_apps](https://github.com/Grovety/lilygo_s3_apps)| <p align="center"> <img src="image/1.jpg" alt="example" width="100%"> </p> |
 | [XiaoZhi_AI_Chatbot](https://github.com/78/xiaozhi-esp32?tab=readme-ov-file) | || <p align="center">![alt text][supported] | 该示例为小智AI示例，由Xiaoxia提供| <p align="center"> <img src="image/15.jpg" alt="example" width="100%"> </p> |
 
+#### T-Circle-S3-Infrared-Expansion 示例
+| Example | `[Platformio IDE][espressif32-v6.5.0]`<br />`[Arduino IDE][esp32_v2.0.14]` | `[ESP-IDF][esp-idf-V4.4.8]`| `[ESP-IDF][esp-idf-V5.3.2]`| Description | Picture |
+| ------  | ------  | ------ | ------ | ------ | ------ | 
+| [RMT](./examples/RMT) |  <p align="center">![alt text][supported] | || |  |
+| [ICM20948](./examples/ICM20948) | <p align="center">![alt text][supported] | | ||  |
+
 [supported]: https://img.shields.io/badge/-supported-green "example"
 
 | Firmware | Description | Picture |
@@ -164,6 +196,7 @@ T-Circle-S3是一款基于ESP32S3开发的板载0.75寸小屏的开发板，配�
 | [GFX_Wifi_STA_Contract](./firmware/[T-Circle-S3_V1.0][GFX_Wifi_STA_Contract]_firmware_V1.0.0) | 初始版本 |  |
 | [lilygo_s3_apps](./firmware/[T-Circle-S3_V1.0]_[lilygo_s3_apps]_firmware_V1.0.0.bin) | 初始版本 |  |
 | [xiaozhi_esp32](./firmware/[T-Circle-S3_V1.0][xiaozhi-esp32_V1.0.1]_firmware_202501240943.bin) | |  |
+| [Original_Test(T_Circle_S3_Infrared_Expansion)](./firmware/[T-Circle-S3_V1.0][T_Circle_S3_Infrared_Expansion_V1.0][Original_Test]_firmware_202506091350.bin) | |  |
 
 ### PlatformIO
 1. 安装[VisualStudioCode](https://code.visualstudio.com/Download)，根据你的系统类型选择安装。
@@ -224,50 +257,10 @@ T-Circle-S3是一款基于ESP32S3开发的板载0.75寸小屏的开发板，配�
 
 ## 引脚总览
 
-| LCD屏幕引脚  | ESP32S3引脚|
-| :------------------: | :------------------:|
-| MOSI         | IO17       |
-| DC         | IO16       |
-| SCLK         | IO15       |
-| CS         | IO13       |
-| BL         | IO18       |
+引脚定义请参考配置文件：
+<br />
 
-| 触摸芯片引脚  | ESP32S3引脚|
-| :------------------: | :------------------:|
-| INT         | IO12       |
-| SDA         | IO11       |
-| SCL         | IO14       |
-
-| 麦克风引脚  | ESP32S3引脚|
-| :------------------: | :------------------:|
-| BCLK         | IO7       |
-| WS         | IO9       |
-| DATA         | IO8       |
-
-> #### T-Circle-S3_V1.0 版本
-> | 麦克风引脚  | ESP32S3引脚|
-> | :------------------: | :------------------:|
-> | BCLK         | IO7       |
-> | WS         | IO9       |
-> | DATA         | IO8       |
-
-> #### T-Circle-S3_V1.1 版本
-> | 麦克风引脚  | ESP32S3引脚|
-> | :------------------: | :------------------:|
-> | LRCLK         | IO9       |
-> | DATA         | IO8       |
-
-| 扬声器引脚  | ESP32S3引脚|
-| :------------------: | :------------------:|
-| BCLK         | IO5       |
-| LRCLK         | IO4       |
-| SD_MODE         | IO45       |
-| DATA         | IO6       |
-
-| LED引脚  | ESP32S3引脚|
-| :------------------: | :------------------:|
-| CLOCK         | IO39       |
-| DATA         | IO38       |
+[pin_config.h](./libraries/Mylibrary/pin_config.h)  
 
 ## 相关测试
 
