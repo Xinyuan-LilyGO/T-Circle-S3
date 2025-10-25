@@ -2,7 +2,7 @@
  * @Description: None
  * @Author: LILYGO_L
  * @Date: 2025-01-02 11:24:39
- * @LastEditTime: 2025-10-25 17:18:55
+ * @LastEditTime: 2025-10-25 17:23:36
  * @License: GPL 3.0
 -->
 
@@ -287,4 +287,5 @@ For pin definitions, please refer to the configuration file:
 
 ## Project
 * [T-Circle-S3_V1.0](./project/T-Circle-S3_V1.0.pdf)
+* [T-Circle-S3-Infrared-Expansion_V1.0](./project/T-Circle-S3-Infrared-Expansion_V1.0.pdf)
 

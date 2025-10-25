@@ -287,3 +287,4 @@ T-Circle-S3-Infrared-Expansion为T-Circle-S3的红外扩展板，板载有红外
 
 ## 项目
 * [T-Circle-S3_V1.0](./project/T-Circle-S3_V1.0.pdf)
+* [T-Circle-S3-Infrared-Expansion_V1.0](./project/T-Circle-S3-Infrared-Expansion_V1.0.pdf)
