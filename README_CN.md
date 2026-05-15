@@ -2,7 +2,7 @@
  * @Description: None
  * @Author: LILYGO_L
  * @Date: 2025-01-02 11:24:39
- * @LastEditTime: 2025-10-25 17:19:03
+ * @LastEditTime: 2026-05-15 11:51:49
  * @License: GPL 3.0
 -->
 
@@ -287,4 +287,5 @@ T-Circle-S3-Infrared-Expansion为T-Circle-S3的红外扩展板，板载有红外
 
 ## 项目
 * [T-Circle-S3_V1.0](./project/T-Circle-S3_V1.0.pdf)
+* [T-Circle-S3_V1.1](./project/T-Circle-S3_V1.1.pdf)
 * [T-Circle-S3-Infrared-Expansion_V1.0](./project/T-Circle-S3-Infrared-Expansion_V1.0.pdf)

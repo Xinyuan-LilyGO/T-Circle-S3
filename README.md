@@ -287,5 +287,6 @@ For pin definitions, please refer to the configuration file:
 
 ## Project
 * [T-Circle-S3_V1.0](./project/T-Circle-S3_V1.0.pdf)
+* [T-Circle-S3_V1.1](./project/T-Circle-S3_V1.1.pdf)
 * [T-Circle-S3-Infrared-Expansion_V1.0](./project/T-Circle-S3-Infrared-Expansion_V1.0.pdf)
 
