@@ -482,7 +482,7 @@ bool Audio::connecttohost(const char* host, const char* user, const char* pwd) {
     strcat(rqh, "\r\n");
     strcat(rqh, "Icy-MetaData:1\r\n");
 
-    if (auth > 0) {
+    if (auth > 0 && m_f_ssl) {
         strcat(rqh, "Authorization: Basic ");
         strcat(rqh, authorization);
         strcat(rqh, "\r\n");
