@@ -66,6 +66,14 @@
 #define ICM20948_SCL IIC_SCL_2
 #define ICM20948_INT 42
 
+// QMI8658
+#define QMI8658_SDA IIC_SDA_2
+#define QMI8658_SCL IIC_SCL_2
+
+// QMC6309
+#define QMC6309_SDA IIC_SDA_2
+#define QMC6309_SCL IIC_SCL_2
+
 // RMT
 #define RMT_TX 41
 #define RMT_RX 40

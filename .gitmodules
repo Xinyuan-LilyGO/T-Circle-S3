@@ -1,0 +1,3 @@
+[submodule "libraries/sensorlib"]
+	path = libraries/sensorlib
+	url = https://github.com/lewisxhe/sensorlib.git

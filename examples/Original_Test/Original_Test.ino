@@ -18,6 +18,8 @@
 #include "FastLED.h"
 #include "Audio.h"
 #include "ICM20948_WE.h"
+#include "SensorQMI8658.hpp"
+#include "SensorQMC6309.hpp"
 #include "IRremoteESP8266.h"
 #include "IRrecv.h"
 #include "IRsend.h"
@@ -25,7 +27,7 @@
 
 #define SOFTWARE_NAME "Original_Test"
 
-#define SOFTWARE_LASTEDITTIME "202506091350"
+#define SOFTWARE_LASTEDITTIME "202610151723"
 
 #ifdef T_Circle_S3_V1_0
 #define BOARD_VERSION "V1.0"
@@ -124,6 +126,61 @@ std::unique_ptr<Arduino_IIC> CST816D(new Arduino_CST816x(IIC_Bus, CST816D_DEVICE
  * ICM20948_WE myIMU = ICM20948_WE(&SPI, CS_PIN, spi);  -> uses SPI / passes the SPI object, spi is just a flag, see SPI example
  */
 ICM20948_WE myIMU = ICM20948_WE(ICM20948_ADDRESS);
+SensorQMI8658 qmi8658;
+SensorQMC6309 qmc6309;
+enum class ImuKind { kIcm20948, kQmi8658Qmc6309, kUnknown };
+ImuKind imu_kind = ImuKind::kUnknown;
+
+bool InitQmi8658Qmc6309()
+{
+    if (!qmi8658.begin(Wire, QMI8658_H_SLAVE_ADDRESS, QMI8658_SDA, QMI8658_SCL) ||
+        !qmc6309.begin(Wire, QMC6309_SLAVE_ADDRESS, QMC6309_SDA, QMC6309_SCL))
+    {
+        return false;
+    }
+    if (!qmi8658.configAccelerometer(SensorQMI8658::ACC_RANGE_2G,
+                                     SensorQMI8658::ACC_ODR_125Hz,
+                                     SensorQMI8658::LPF_MODE_3) ||
+        !qmi8658.configGyroscope(SensorQMI8658::GYR_RANGE_256DPS,
+                                  SensorQMI8658::GYR_ODR_112_1Hz,
+                                  SensorQMI8658::LPF_MODE_3) ||
+        !qmi8658.disableSyncSampleMode())
+    {
+        return false;
+    }
+    qmi8658.enableAccelerometer();
+    qmi8658.enableGyroscope();
+    return qmc6309.setOperationMode(OperationMode::CONTINUOUS_MEASUREMENT) &&
+           qmc6309.setFullScaleRange(MagFullScaleRange::FS_32G) &&
+           qmc6309.setOversamplingRate(MagOverSampleRatio::OSR_8) &&
+           qmc6309.setLowPassFilter(MagLowPassFilter::LPF_8) &&
+           qmc6309.setSetResetMode(SensorQMC6309::MagSetResetMode::SET_AND_RESET_ON);
+}
+
+bool InitImu()
+{
+    Wire.setPins(ICM20948_SDA, ICM20948_SCL);
+    Wire.begin();
+    if (myIMU.init() && myIMU.initMagnetometer())
+    {
+        myIMU.sleep(false);
+        myIMU.setAccRange(ICM20948_ACC_RANGE_2G);
+        myIMU.setAccDLPF(ICM20948_DLPF_6);
+        myIMU.setMagOpMode(AK09916_CONT_MODE_20HZ);
+        imu_kind = ImuKind::kIcm20948;
+        Serial.println("IMU selected: ICM20948");
+        return true;
+    }
+    if (InitQmi8658Qmc6309())
+    {
+        imu_kind = ImuKind::kQmi8658Qmc6309;
+        Serial.println("IMU selected: QMI8658 + QMC6309");
+        return true;
+    }
+    imu_kind = ImuKind::kUnknown;
+    Serial.println("No supported IMU found");
+    return false;
+}
 
 void Arduino_IIC_Touch_Interrupt(void)
 {
@@ -699,6 +756,17 @@ void Original_Test_8()
 
 void Original_Test_9()
 {
+    if (imu_kind == ImuKind::kQmi8658Qmc6309)
+    {
+        gfx->fillScreen(WHITE);
+        gfx->setTextSize(1);
+        gfx->setTextColor(BLACK);
+        gfx->setCursor(50, 30);
+        gfx->printf("IMU Info");
+        GFX_Print_1();
+        return;
+    }
+
     Serial.println("Position your ICM20948 flat and don't move it - calibrating...");
     delay(1000);
     myIMU.autoOffsets();
@@ -790,6 +858,46 @@ void Original_Test_11()
 
 void GFX_Print_IMU_Loop()
 {
+    if (imu_kind == ImuKind::kQmi8658Qmc6309)
+    {
+        IMUdata acc = {};
+        IMUdata gyr = {};
+        MagnetometerData magnetic;
+        const bool motion_ready = qmi8658.getDataReady() &&
+            qmi8658.getAccelerometer(acc.x, acc.y, acc.z) &&
+            qmi8658.getGyroscope(gyr.x, gyr.y, gyr.z);
+        const bool magnetic_ready = qmc6309.readData(magnetic) && !magnetic.overflow;
+
+        if (motion_ready)
+        {
+            const float pitch = atan2f(-acc.x, sqrtf(acc.y * acc.y + acc.z * acc.z));
+            const float roll = atan2f(acc.y, acc.z);
+            float yaw = 0.0f;
+            if (magnetic_ready)
+            {
+                const float mx = magnetic.magnetic_field.x * 100.0f;
+                const float my = magnetic.magnetic_field.y * 100.0f;
+                const float mz = magnetic.magnetic_field.z * 100.0f;
+                const float hx = mx * cosf(pitch) + mz * sinf(pitch);
+                const float hy = mx * sinf(roll) * sinf(pitch) + my * cosf(roll) -
+                                 mz * sinf(roll) * cosf(pitch);
+                yaw = atan2f(hy, hx) * 180.0f / M_PI;
+                if (yaw < 0.0f) yaw += 360.0f;
+            }
+
+            gfx->setCursor(30, 40);
+            gfx->fillRect(50, 40, 100, 50, WHITE);
+            gfx->setTextColor(RED);
+            gfx->printf("Pitch:[%.2f]", pitch * 180.0f / M_PI);
+            gfx->setCursor(30, 50);
+            gfx->printf("Roll:[%.2f]", roll * 180.0f / M_PI);
+            gfx->setCursor(30, 60);
+            if (magnetic_ready) gfx->printf("Yaw:[%.2f]", yaw);
+            else gfx->printf("Yaw:[--]");
+        }
+        return;
+    }
+
     myIMU.readSensor();
     xyzFloat gValue = myIMU.getGValues();
     xyzFloat angle = myIMU.getAngles();
@@ -1597,26 +1705,7 @@ void setup()
 #ifdef T_Circle_S3_Infrared_Expansion
     Wire.setPins(ICM20948_SDA, ICM20948_SCL);
     Wire.begin();
-
-    if (myIMU.init() == false)
-    {
-        Serial.println("ICM20948 AG initialization failed");
-        delay(1000);
-    }
-    else
-    {
-        Serial.println("ICM20948 init successful");
-    }
-
-    if (myIMU.initMagnetometer() == false)
-    {
-        Serial.println("ICM20948 M initialization failed");
-        delay(1000);
-    }
-    else
-    {
-        Serial.println("ICM20948 initMagnetometer successful");
-    }
+    InitImu();
 
 #endif
 
